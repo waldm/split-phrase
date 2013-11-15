@@ -3,6 +3,7 @@ package com.waldm.proverbica;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -28,6 +29,9 @@ public class MainActivity extends Activity {
 			"polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
 	private int imageIndex = 0;
 	private ImageView image;
+	private static final String WEBSITE = "http://proverbica.herokuapp.com/";
+	private static final String SAYING_PAGE = WEBSITE + "saying";
+	private static final String IMAGES_DIR = WEBSITE + "images/";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +42,17 @@ public class MainActivity extends Activity {
 
 		image = (ImageView) findViewById(R.id.image);
 		Picasso.with(this)
-				.load("http://proverbica.herokuapp.com/images/lion.jpg")
+				.load(IMAGES_DIR + images[new Random().nextInt(images.length)])
 				.into(image);
 
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new RetrieveSaying(MainActivity.this)
-						.execute("http://proverbica.herokuapp.com/saying");
+				new RetrieveSaying(MainActivity.this).execute(SAYING_PAGE);
 			}
 		});
+
+		new RetrieveSaying(MainActivity.this).execute(SAYING_PAGE);
 	}
 
 	private static class RetrieveSaying extends AsyncTask<String, Void, String> {
@@ -61,8 +66,7 @@ public class MainActivity extends Activity {
 		protected String doInBackground(String... urls) {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpContext localContext = new BasicHttpContext();
-			HttpGet httpGet = new HttpGet(
-					"http://proverbica.herokuapp.com/saying");
+			HttpGet httpGet = new HttpGet(urls[0]);
 			HttpResponse response = null;
 			try {
 				response = httpClient.execute(httpGet, localContext);
@@ -103,13 +107,13 @@ public class MainActivity extends Activity {
 
 	public void setText(String result) {
 		textBox.setText(result);
-		imageIndex++;
-		if (imageIndex >= images.length) {
-			imageIndex = 0;
+		int newImageIndex = new Random().nextInt(images.length);
+		while (newImageIndex == imageIndex) {
+			newImageIndex = new Random().nextInt(images.length);
 		}
 
-		Picasso.with(this)
-				.load("http://proverbica.herokuapp.com/images/"
-						+ images[imageIndex]).into(image);
+		imageIndex = newImageIndex;
+
+		Picasso.with(this).load(IMAGES_DIR + images[imageIndex]).into(image);
 	}
 }
