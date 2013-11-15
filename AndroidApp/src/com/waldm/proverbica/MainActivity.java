@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
 			String line = null;
 			try {
 				while ((line = reader.readLine()) != null) {
-					result += line + "\n";
+					result += line;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
