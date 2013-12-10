@@ -33,6 +33,6 @@
         android:layout_centerHorizontal="true"
         android:drawableLeft="@android:drawable/ic_menu_share"
         android:text="@string/share"        
-        android:background="@drawable/text_background"/>
+        android:background="@drawable/share_button_background"/>
 
 </RelativeLayout>
