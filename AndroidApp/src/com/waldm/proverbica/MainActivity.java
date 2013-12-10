@@ -8,19 +8,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 public class MainActivity extends Activity {
 	private TextView textBox;
-	private static final String[] images = { "lion.jpg", "monkey.jpg",
-			"gorilla.jpg", "hawk.jpg", "owl.jpg", "dog.jpg", "tiger.jpg",
-			"polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
-	private int imageIndex = 0;
 	private ImageView image;
 	private RetrieveSaying retrieveSaying;
-	private static final String WEBSITE = "http://proverbica.herokuapp.com/";
+	private int imageIndex;
+	public static final String WEBSITE = "http://proverbica.herokuapp.com/";
 	private static final String SAYING_PAGE = WEBSITE + "saying";
-	private static final String IMAGES_DIR = WEBSITE + "images/";
+	protected static final String[] images = { "lion.jpg", "monkey.jpg",
+			"gorilla.jpg", "hawk.jpg", "owl.jpg", "dog.jpg", "tiger.jpg",
+			"polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,31 +28,32 @@ public class MainActivity extends Activity {
 		textBox = (TextView) findViewById(R.id.text_box);
 
 		image = (ImageView) findViewById(R.id.image);
-		Picasso.with(this)
-				.load(IMAGES_DIR + images[new Random().nextInt(images.length)])
-				.into(image);
+		retrieveSaying = new RetrieveSayingFromFile(this, image);
 
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				retrieveSaying = new RetrieveSayingFromFile(MainActivity.this);
-				retrieveSaying.execute(SAYING_PAGE);
+				// retrieveSaying = new
+				// RetrieveSayingFromFile(MainActivity.this, image);
+				retrieveSaying.loadSaying(SAYING_PAGE);
 			}
 		});
 
-		retrieveSaying = new RetrieveSayingFromFile(this);
-		retrieveSaying.execute(SAYING_PAGE);
+		retrieveSaying.loadSaying(SAYING_PAGE);
 	}
 
 	public void setText(String result) {
 		textBox.setText(result);
+		generateNextImageIndex();
+		retrieveSaying.loadImage(images[imageIndex]);
+	}
+
+	private void generateNextImageIndex() {
 		int newImageIndex = new Random().nextInt(images.length);
 		while (newImageIndex == imageIndex) {
 			newImageIndex = new Random().nextInt(images.length);
 		}
 
 		imageIndex = newImageIndex;
-
-		Picasso.with(this).load(IMAGES_DIR + images[imageIndex]).into(image);
 	}
 }

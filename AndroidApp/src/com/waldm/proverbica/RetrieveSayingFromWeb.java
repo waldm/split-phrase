@@ -12,10 +12,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-public class RetrieveSayingFromWeb extends RetrieveSaying {
+import android.os.AsyncTask;
+import android.widget.ImageView;
 
-	public RetrieveSayingFromWeb(MainActivity mainActivity) {
-		super(mainActivity);
+import com.squareup.picasso.Picasso;
+
+public class RetrieveSayingFromWeb extends AsyncTask<String, Void, String>
+		implements RetrieveSaying {
+
+	private static final String IMAGES_DIR = MainActivity.WEBSITE + "images/";
+	private final MainActivity mainActivity;
+	private final ImageView imageView;
+
+	public RetrieveSayingFromWeb(MainActivity mainActivity, ImageView imageView) {
+		this.mainActivity = mainActivity;
+		this.imageView = imageView;
 	}
 
 	@Override
@@ -52,5 +63,21 @@ public class RetrieveSayingFromWeb extends RetrieveSaying {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	@Override
+	protected void onPostExecute(String result) {
+		super.onPostExecute(result);
+		mainActivity.setText(result);
+	}
+
+	@Override
+	public void loadImage(String imageName) {
+		Picasso.with(mainActivity).load(IMAGES_DIR + imageName).into(imageView);
+	}
+
+	@Override
+	public void loadSaying(String sayingPage) {
+		this.execute(sayingPage);
 	}
 }

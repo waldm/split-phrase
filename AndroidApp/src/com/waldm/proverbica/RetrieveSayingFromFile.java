@@ -8,27 +8,51 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import android.content.res.AssetManager;
+import android.widget.ImageView;
 
-public class RetrieveSayingFromFile extends RetrieveSaying {
+public class RetrieveSayingFromFile implements RetrieveSaying {
 
-	private final AssetManager assets;
 	private final String filename = "sayings.txt";
 	private List<String> sayings;
+	private List<Integer> imageIds;
+	private final MainActivity mainActivity;
+	private final ImageView imageView;
 
-	public RetrieveSayingFromFile(MainActivity mainActivity) {
-		super(mainActivity);
-		assets = mainActivity.getAssets();
+	public RetrieveSayingFromFile(MainActivity mainActivity, ImageView imageView) {
+		this.mainActivity = mainActivity;
+		this.imageView = imageView;
 	}
 
 	@Override
-	protected String doInBackground(String... files) {
+	public void loadImage(String imageName) {
+		if (imageIds == null) {
+			// imageIds = new ArrayList<Integer>();
+			// for (int i = 0; i < images.length; i++) {
+			// imageIds.add(mainActivity.getResources().getIdentifier(
+			// images[i].replace(".jpg", ""), "drawable",
+			// mainActivity.getPackageName()));
+			// }
+		}
+
+		// imageView.setImageDrawable(mainActivity.getResources().getDrawable(
+		// imageIds.get(imageIndex)));
+
+		// Picasso.with(mainActivity)
+		// /.load(mainActivity.getResources().getIdentifier(
+		// /imageName.replace(".jpg", ""), "drawable",
+		// mainActivity.getPackageName())).into(imageView);
+		// Picasso.with(mainActivity).load(R.drawable.cat).into(imageView);
+		imageView.setImageResource(R.drawable.cat);
+	}
+
+	@Override
+	public void loadSaying(String sayingPage) {
 		if (sayings == null) {
 			sayings = new ArrayList<String>();
 
 			InputStream stream = null;
 			try {
-				stream = assets.open(filename);
+				stream = mainActivity.getAssets().open(filename);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -50,6 +74,6 @@ public class RetrieveSayingFromFile extends RetrieveSaying {
 				"\\|")[0];
 		String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
 
-		return beginning + " " + end;
+		mainActivity.setText(beginning + " " + end);
 	}
 }
