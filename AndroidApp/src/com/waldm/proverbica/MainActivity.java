@@ -33,8 +33,6 @@ public class MainActivity extends Activity {
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// retrieveSaying = new
-				// RetrieveSayingFromFile(MainActivity.this, image);
 				retrieveSaying.loadSaying(SAYING_PAGE);
 			}
 		});

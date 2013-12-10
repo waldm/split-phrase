@@ -10,11 +10,12 @@ import java.util.Random;
 
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 public class RetrieveSayingFromFile implements RetrieveSaying {
 
 	private final String filename = "sayings.txt";
 	private List<String> sayings;
-	private List<Integer> imageIds;
 	private final MainActivity mainActivity;
 	private final ImageView imageView;
 
@@ -25,24 +26,10 @@ public class RetrieveSayingFromFile implements RetrieveSaying {
 
 	@Override
 	public void loadImage(String imageName) {
-		if (imageIds == null) {
-			// imageIds = new ArrayList<Integer>();
-			// for (int i = 0; i < images.length; i++) {
-			// imageIds.add(mainActivity.getResources().getIdentifier(
-			// images[i].replace(".jpg", ""), "drawable",
-			// mainActivity.getPackageName()));
-			// }
-		}
-
-		// imageView.setImageDrawable(mainActivity.getResources().getDrawable(
-		// imageIds.get(imageIndex)));
-
-		// Picasso.with(mainActivity)
-		// /.load(mainActivity.getResources().getIdentifier(
-		// /imageName.replace(".jpg", ""), "drawable",
-		// mainActivity.getPackageName())).into(imageView);
-		// Picasso.with(mainActivity).load(R.drawable.cat).into(imageView);
-		imageView.setImageResource(R.drawable.cat);
+		Picasso.with(mainActivity)
+				.load(mainActivity.getResources().getIdentifier(
+						imageName.replace(".jpg", ""), "drawable",
+						mainActivity.getPackageName())).into(imageView);
 	}
 
 	@Override
