@@ -3,6 +3,7 @@
 
     <string name="app_name">Proverbica</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="share_proverb">Share proverb to…</string>
+    <string name="share">Share</string>
 
 </resources>
