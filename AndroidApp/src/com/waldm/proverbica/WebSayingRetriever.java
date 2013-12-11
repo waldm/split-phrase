@@ -77,7 +77,8 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String>
 	}
 
 	@Override
-	public void loadSaying(String sayingPage) {
+	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
 		this.execute(sayingPage);
+		return new WebSayingRetriever(mainActivity, imageView);
 	}
 }

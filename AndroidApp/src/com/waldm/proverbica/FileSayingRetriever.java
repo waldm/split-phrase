@@ -33,7 +33,7 @@ public class FileSayingRetriever implements SayingRetriever {
 	}
 
 	@Override
-	public void loadSaying(String sayingPage) {
+	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
 		if (sayings == null) {
 			sayings = new ArrayList<String>();
 
@@ -62,5 +62,6 @@ public class FileSayingRetriever implements SayingRetriever {
 		String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
 
 		mainActivity.setText(beginning + " " + end);
+		return this;
 	}
 }

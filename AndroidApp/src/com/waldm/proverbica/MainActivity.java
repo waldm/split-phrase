@@ -35,7 +35,8 @@ public class MainActivity extends Activity {
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sayingRetriever.loadSaying(SAYING_PAGE);
+				sayingRetriever = sayingRetriever
+						.loadSayingAndRefresh(SAYING_PAGE);
 			}
 		});
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		sayingRetriever.loadSaying(SAYING_PAGE);
+		sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
 	}
 
 	public void setText(String result) {
