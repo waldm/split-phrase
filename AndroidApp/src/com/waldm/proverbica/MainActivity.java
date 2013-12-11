@@ -4,13 +4,20 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements
+		OnSharedPreferenceChangeListener {
 	private TextView textBox;
 	private ImageView image;
 	private SayingRetriever sayingRetriever;
@@ -30,7 +37,15 @@ public class MainActivity extends Activity {
 		textBox = (TextView) findViewById(R.id.text_box);
 
 		image = (ImageView) findViewById(R.id.image);
-		sayingRetriever = new WebSayingRetriever(this, image);
+
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE,
+				false)) {
+			sayingRetriever = new FileSayingRetriever(this, image);
+		} else {
+			sayingRetriever = new WebSayingRetriever(this, image);
+		}
 
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -70,5 +85,36 @@ public class MainActivity extends Activity {
 		}
 
 		imageIndex = newImageIndex;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		if (key.equals(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE)) {
+			if (sharedPreferences.getBoolean(key, false)) {
+				sayingRetriever = new FileSayingRetriever(this, image);
+			} else {
+				sayingRetriever = new WebSayingRetriever(this, image);
+			}
+		}
 	}
 }

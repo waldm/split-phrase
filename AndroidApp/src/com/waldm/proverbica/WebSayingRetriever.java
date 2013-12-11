@@ -12,7 +12,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -80,7 +82,13 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String>
 
 	@Override
 	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
-		if (NetworkConnectivity.isNetworkAvailable(mainActivity)) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(mainActivity);
+		boolean alwaysUseFile = sharedPref.getBoolean(
+				SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
+
+		if (NetworkConnectivity.isNetworkAvailable(mainActivity)
+				&& !alwaysUseFile) {
 			Log.d(TAG, "Loading saying from the internet");
 			this.execute(sayingPage);
 			return new WebSayingRetriever(mainActivity, imageView);

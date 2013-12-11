@@ -26,5 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+                <activity
+            android:name="com.waldm.proverbica.SettingsActivity"
+            android:label="@string/app_name" android:screenOrientation="portrait" />
+        
     </application>
 </manifest>

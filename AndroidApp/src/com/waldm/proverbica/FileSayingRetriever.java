@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -36,7 +38,13 @@ public class FileSayingRetriever implements SayingRetriever {
 
 	@Override
 	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
-		if (NetworkConnectivity.isNetworkAvailable(mainActivity)) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(mainActivity);
+		boolean alwaysUseFile = sharedPref.getBoolean(
+				SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
+
+		if (NetworkConnectivity.isNetworkAvailable(mainActivity)
+				&& !alwaysUseFile) {
 			return new WebSayingRetriever(mainActivity, imageView)
 					.loadSayingAndRefresh(sayingPage);
 		} else {
