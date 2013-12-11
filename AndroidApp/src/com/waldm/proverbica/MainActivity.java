@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
 		textBox = (TextView) findViewById(R.id.text_box);
 
 		image = (ImageView) findViewById(R.id.image);
-		sayingRetriever = new FileSayingRetriever(this, image);
+		sayingRetriever = new WebSayingRetriever(this, image);
 
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override

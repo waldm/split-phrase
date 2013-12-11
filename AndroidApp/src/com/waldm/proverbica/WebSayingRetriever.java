@@ -13,6 +13,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -21,6 +22,7 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String>
 		implements SayingRetriever {
 
 	private static final String IMAGES_DIR = MainActivity.WEBSITE + "images/";
+	private static final String TAG = WebSayingRetriever.class.getSimpleName();
 	private final MainActivity mainActivity;
 	private final ImageView imageView;
 
@@ -78,7 +80,13 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String>
 
 	@Override
 	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
-		this.execute(sayingPage);
-		return new WebSayingRetriever(mainActivity, imageView);
+		if (NetworkConnectivity.isNetworkAvailable(mainActivity)) {
+			Log.d(TAG, "Loading saying from the internet");
+			this.execute(sayingPage);
+			return new WebSayingRetriever(mainActivity, imageView);
+		} else {
+			return new FileSayingRetriever(mainActivity, imageView)
+					.loadSayingAndRefresh(sayingPage);
+		}
 	}
 }

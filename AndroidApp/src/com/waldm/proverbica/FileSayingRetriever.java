@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 public class FileSayingRetriever implements SayingRetriever {
 
+	private static final String TAG = FileSayingRetriever.class.getSimpleName();
 	private final String filename = "sayings.txt";
 	private List<String> sayings;
 	private final MainActivity mainActivity;
@@ -34,34 +36,41 @@ public class FileSayingRetriever implements SayingRetriever {
 
 	@Override
 	public SayingRetriever loadSayingAndRefresh(String sayingPage) {
-		if (sayings == null) {
-			sayings = new ArrayList<String>();
+		if (NetworkConnectivity.isNetworkAvailable(mainActivity)) {
+			return new WebSayingRetriever(mainActivity, imageView)
+					.loadSayingAndRefresh(sayingPage);
+		} else {
+			Log.d(TAG, "Loading saying from file");
+			if (sayings == null) {
+				sayings = new ArrayList<String>();
 
-			InputStream stream = null;
-			try {
-				stream = mainActivity.getAssets().open(filename);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					stream));
-			String saying;
-			try {
-				while ((saying = reader.readLine()) != null) {
-					sayings.add(saying);
+				InputStream stream = null;
+				try {
+					stream = mainActivity.getAssets().open(filename);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(stream));
+				String saying;
+				try {
+					while ((saying = reader.readLine()) != null) {
+						sayings.add(saying);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+
+			Random random = new Random();
+			String beginning = sayings.get(random.nextInt(sayings.size()))
+					.split("\\|")[0];
+			String end = sayings.get(random.nextInt(sayings.size())).split(
+					"\\|")[1];
+
+			mainActivity.setText(beginning + " " + end);
+			return this;
 		}
-
-		Random random = new Random();
-		String beginning = sayings.get(random.nextInt(sayings.size())).split(
-				"\\|")[0];
-		String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
-
-		mainActivity.setText(beginning + " " + end);
-		return this;
 	}
 }
