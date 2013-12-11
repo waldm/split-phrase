@@ -12,14 +12,14 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-public class RetrieveSayingFromFile implements RetrieveSaying {
+public class FileSayingRetriever implements SayingRetriever {
 
 	private final String filename = "sayings.txt";
 	private List<String> sayings;
 	private final MainActivity mainActivity;
 	private final ImageView imageView;
 
-	public RetrieveSayingFromFile(MainActivity mainActivity, ImageView imageView) {
+	public FileSayingRetriever(MainActivity mainActivity, ImageView imageView) {
 		this.mainActivity = mainActivity;
 		this.imageView = imageView;
 	}

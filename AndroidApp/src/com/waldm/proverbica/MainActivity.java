@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	private TextView textBox;
 	private ImageView image;
-	private RetrieveSaying retrieveSaying;
+	private SayingRetriever sayingRetriever;
 	private int imageIndex;
 	public static final String WEBSITE = "http://proverbica.herokuapp.com/";
 	private static final String SAYING_PAGE = WEBSITE + "saying";
@@ -30,12 +30,12 @@ public class MainActivity extends Activity {
 		textBox = (TextView) findViewById(R.id.text_box);
 
 		image = (ImageView) findViewById(R.id.image);
-		retrieveSaying = new RetrieveSayingFromFile(this, image);
+		sayingRetriever = new FileSayingRetriever(this, image);
 
 		image.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				retrieveSaying.loadSaying(SAYING_PAGE);
+				sayingRetriever.loadSaying(SAYING_PAGE);
 			}
 		});
 
@@ -53,13 +53,13 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		retrieveSaying.loadSaying(SAYING_PAGE);
+		sayingRetriever.loadSaying(SAYING_PAGE);
 	}
 
 	public void setText(String result) {
 		textBox.setText(result);
 		generateNextImageIndex();
-		retrieveSaying.loadImage(images[imageIndex]);
+		sayingRetriever.loadImage(images[imageIndex]);
 	}
 
 	private void generateNextImageIndex() {

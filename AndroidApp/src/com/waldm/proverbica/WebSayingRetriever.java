@@ -17,14 +17,14 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-public class RetrieveSayingFromWeb extends AsyncTask<String, Void, String>
-		implements RetrieveSaying {
+public class WebSayingRetriever extends AsyncTask<String, Void, String>
+		implements SayingRetriever {
 
 	private static final String IMAGES_DIR = MainActivity.WEBSITE + "images/";
 	private final MainActivity mainActivity;
 	private final ImageView imageView;
 
-	public RetrieveSayingFromWeb(MainActivity mainActivity, ImageView imageView) {
+	public WebSayingRetriever(MainActivity mainActivity, ImageView imageView) {
 		this.mainActivity = mainActivity;
 		this.imageView = imageView;
 	}
