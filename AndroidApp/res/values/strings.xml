@@ -6,5 +6,7 @@
     <string name="share_proverb">Share proverb to…</string>
     <string name="share">Share</string>
     <string name="pref_always_file">Always load proverbs from file</string>
+    <string name="loading_proverb">Loading proverb…</string>
+    <string name="failed_to_load_proverb">Failed to load proverb</string>
 
 </resources>

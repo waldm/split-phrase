@@ -17,9 +17,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.waldm.proverbica.MainActivity;
 import com.waldm.proverbica.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
@@ -29,12 +29,10 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     private static final String IMAGES_DIR = MainActivity.WEBSITE + "images/";
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
     private final Context mainActivity;
-    private final ImageView imageView;
     private final SayingDisplayer sayingDisplayer;
 
-    public WebSayingRetriever(Context mainActivity, ImageView imageView, SayingDisplayer sayingDisplayer) {
+    public WebSayingRetriever(Context mainActivity, SayingDisplayer sayingDisplayer) {
         this.mainActivity = mainActivity;
-        this.imageView = imageView;
         this.sayingDisplayer = sayingDisplayer;
     }
 
@@ -80,8 +78,8 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     }
 
     @Override
-    public void loadImage(String imageName) {
-        Picasso.with(mainActivity).load(IMAGES_DIR + imageName).into(imageView);
+    public void loadImage(String imageName, Target target) {
+        Picasso.with(mainActivity).load(IMAGES_DIR + imageName).into(target);
     }
 
     @Override
@@ -92,15 +90,15 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
             Log.d(TAG, "Loading saying from the internet");
             this.execute(sayingPage);
-            return new WebSayingRetriever(mainActivity, imageView, sayingDisplayer);
+            return new WebSayingRetriever(mainActivity, sayingDisplayer);
         } else {
-            return new FileSayingRetriever(mainActivity, imageView, sayingDisplayer).loadSayingAndRefresh(sayingPage);
+            return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh(sayingPage);
         }
     }
 
     @Override
     public String loadSaying(String sayingPage) {
         // TODO Auto-generated method stub
-        return new FileSayingRetriever(mainActivity, imageView, sayingDisplayer).loadSaying(sayingPage);
+        return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSaying(sayingPage);
     }
 }

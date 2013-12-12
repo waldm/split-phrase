@@ -12,9 +12,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.waldm.proverbica.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
@@ -24,20 +24,18 @@ public class FileSayingRetriever implements SayingRetriever {
     private final String filename = "sayings.txt";
     private List<String> sayings;
     private final Context mainActivity;
-    private final ImageView imageView;
     private final SayingDisplayer sayingDisplayer;
 
-    public FileSayingRetriever(Context mainActivity, ImageView imageView, SayingDisplayer sayingDisplayer) {
+    public FileSayingRetriever(Context mainActivity, SayingDisplayer sayingDisplayer) {
         this.mainActivity = mainActivity;
-        this.imageView = imageView;
         this.sayingDisplayer = sayingDisplayer;
     }
 
     @Override
-    public void loadImage(String imageName) {
+    public void loadImage(String imageName, Target target) {
         Picasso.with(mainActivity)
                 .load(mainActivity.getResources().getIdentifier(imageName.replace(".jpg", ""), "drawable",
-                        mainActivity.getPackageName())).into(imageView);
+                        mainActivity.getPackageName())).resize(100, 100).into(target);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class FileSayingRetriever implements SayingRetriever {
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, imageView, sayingDisplayer).loadSayingAndRefresh(sayingPage);
+            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh(sayingPage);
         } else {
             sayingDisplayer.setText(loadSaying(sayingPage));
             return this;
@@ -59,7 +57,7 @@ public class FileSayingRetriever implements SayingRetriever {
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, imageView, sayingDisplayer).loadSaying(sayingPage);
+            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSaying(sayingPage);
         } else {
             Log.d(TAG, "Loading saying from file");
             if (sayings == null) {

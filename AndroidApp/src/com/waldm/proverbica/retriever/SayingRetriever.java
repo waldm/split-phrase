@@ -1,9 +1,11 @@
 package com.waldm.proverbica.retriever;
 
-public interface SayingRetriever {
-    void loadImage(String imageName);
+import com.squareup.picasso.Target;
 
+public interface SayingRetriever {
     SayingRetriever loadSayingAndRefresh(String sayingPage);
 
     String loadSaying(String sayingPage);
+
+    void loadImage(String imageName, Target target);
 }

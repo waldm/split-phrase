@@ -4,15 +4,27 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 
+import com.squareup.picasso.Picasso.LoadedFrom;
+import com.squareup.picasso.Target;
+import com.waldm.proverbica.ImageHandler;
 import com.waldm.proverbica.MainActivity;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingDisplayer;
 
 public class UpdateWidgetService extends Service implements SayingDisplayer {
+    private ImageHandler imageHandler;
+    private String text;
+
+    public UpdateWidgetService() {
+        imageHandler = new ImageHandler();
+    }
+
     @Override
     public void onStart(Intent intent, int startId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
@@ -20,11 +32,31 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
         int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         for (int widgetId : allWidgetIds) {
-            RemoteViews remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
+            final RemoteViews remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.appwidget_provider_layout);
             // Set the text
-            FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, null, this);
-            remoteViews.setTextViewText(R.id.main_widget_layout, sayingRetriever.loadSaying(MainActivity.SAYING_PAGE));
+            FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
+
+            Target target = new Target() {
+                @Override
+                public void onPrepareLoad(Drawable arg0) {
+                    remoteViews.setTextViewText(R.id.text_box, getString(R.string.loading_proverb));
+                }
+
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
+                    remoteViews.setImageViewBitmap(R.id.image, bitmap);
+                    remoteViews.setTextViewText(R.id.text_box, text);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable arg0) {
+                    remoteViews.setTextViewText(R.id.text_box, getString(R.string.failed_to_load_proverb));
+                }
+            };
+
+            text = sayingRetriever.loadSaying(MainActivity.SAYING_PAGE);
+            sayingRetriever.loadImage(imageHandler.getNextImage(), target);
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), ExampleAppWidgetProvider.class);
@@ -34,7 +66,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, clickIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.main_widget_layout, pendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.text_box, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
         stopSelf();

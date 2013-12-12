@@ -1,11 +1,11 @@
 package com.waldm.proverbica;
 
-import java.util.Random;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso.LoadedFrom;
+import com.squareup.picasso.Target;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingDisplayer;
 import com.waldm.proverbica.retriever.SayingRetriever;
@@ -24,30 +26,48 @@ import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
-    private TextView textBox;
     private ImageView image;
     private SayingRetriever sayingRetriever;
-    private int imageIndex;
+    private ImageHandler imageHandler;
+    private Target target;
+    private String text;
     public static final String WEBSITE = "http://proverbica.herokuapp.com/";
     public static final String SAYING_PAGE = WEBSITE + "saying";
-    protected static final String[] images = { "lion.jpg", "monkey.jpg", "gorilla.jpg", "hawk.jpg", "owl.jpg",
-            "dog.jpg", "tiger.jpg", "polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("");
-        textBox = (TextView) findViewById(R.id.text_box);
+        imageHandler = new ImageHandler();
 
+        setTitle("");
+        final TextView textBox = (TextView) findViewById(R.id.text_box);
         image = (ImageView) findViewById(R.id.image);
+
+        target = new Target() {
+            @Override
+            public void onPrepareLoad(Drawable arg0) {
+                textBox.setText(R.string.loading_proverb);
+            }
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
+                image.setImageBitmap(bitmap);
+                textBox.setText(text);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable arg0) {
+                textBox.setText(R.string.failed_to_load_proverb);
+            }
+        };
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false)) {
-            sayingRetriever = new FileSayingRetriever(this, image, this);
+            sayingRetriever = new FileSayingRetriever(this, this);
         } else {
-            sayingRetriever = new WebSayingRetriever(this, image, this);
+            sayingRetriever = new WebSayingRetriever(this, this);
         }
 
         image.setOnClickListener(new View.OnClickListener() {
@@ -74,18 +94,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void setText(String result) {
-        textBox.setText(result);
-        generateNextImageIndex();
-        sayingRetriever.loadImage(images[imageIndex]);
-    }
-
-    private void generateNextImageIndex() {
-        int newImageIndex = new Random().nextInt(images.length);
-        while (newImageIndex == imageIndex) {
-            newImageIndex = new Random().nextInt(images.length);
-        }
-
-        imageIndex = newImageIndex;
+        text = result;
+        sayingRetriever.loadImage(imageHandler.getNextImage(), target);
     }
 
     @Override
@@ -98,11 +108,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.action_settings:
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -110,9 +120,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE)) {
             if (sharedPreferences.getBoolean(key, false)) {
-                sayingRetriever = new FileSayingRetriever(this, image, this);
+                sayingRetriever = new FileSayingRetriever(this, this);
             } else {
-                sayingRetriever = new WebSayingRetriever(this, image, this);
+                sayingRetriever = new WebSayingRetriever(this, this);
             }
         }
     }
