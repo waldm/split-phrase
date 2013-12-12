@@ -48,33 +48,7 @@ public class FileSayingRetriever implements SayingRetriever {
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
             return new WebSayingRetriever(mainActivity, imageView, sayingDisplayer).loadSayingAndRefresh(sayingPage);
         } else {
-            Log.d(TAG, "Loading saying from file");
-            if (sayings == null) {
-                sayings = new ArrayList<String>();
-
-                InputStream stream = null;
-                try {
-                    stream = mainActivity.getAssets().open(filename);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                String saying;
-                try {
-                    while ((saying = reader.readLine()) != null) {
-                        sayings.add(saying);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Random random = new Random();
-            String beginning = sayings.get(random.nextInt(sayings.size())).split("\\|")[0];
-            String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
-
-            sayingDisplayer.setText(beginning + " " + end);
+            sayingDisplayer.setText(loadSaying(sayingPage));
             return this;
         }
     }
