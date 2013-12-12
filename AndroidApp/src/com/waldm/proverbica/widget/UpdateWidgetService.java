@@ -32,7 +32,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
 
         for (int widgetId : allWidgetIds) {
             final RemoteViews remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
-                    R.layout.appwidget_provider_layout);
+                    R.layout.widget_provider_layout);
             // Set the text
             FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
 
@@ -59,7 +59,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
             imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
 
             // Register an onClickListener
-            Intent clickIntent = new Intent(this.getApplicationContext(), ExampleAppWidgetProvider.class);
+            Intent clickIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
 
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);

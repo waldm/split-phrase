@@ -31,12 +31,12 @@
             android:name="com.waldm.proverbica.settings.SettingsActivity"
             android:label="@string/app_name" android:screenOrientation="sensorLandscape" />
         
-        <receiver android:name="com.waldm.proverbica.widget.ExampleAppWidgetProvider" >
+        <receiver android:name="com.waldm.proverbica.widget.WidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/example_appwidget_info" />
+                android:resource="@xml/widget_info" />
         </receiver>
         
         <service android:name="com.waldm.proverbica.widget.UpdateWidgetService"/>

@@ -6,12 +6,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
-public class ExampleAppWidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // Get all ids
-        ComponentName thisWidget = new ComponentName(context, ExampleAppWidgetProvider.class);
+        ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
         // Build the intent to call the service
