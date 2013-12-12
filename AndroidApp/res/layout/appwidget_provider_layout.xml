@@ -3,11 +3,15 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <LinearLayout
+  <TextView
     android:id="@+id/main_widget_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@android:color/holo_blue_bright"/>  
+    android:layout_height="match_parent"    
+    android:background="@android:color/holo_blue_bright"
+    android:text="hello"
+    android:gravity="center"
+    android:padding="10dp"
+    android:textColor="@android:color/black"
+    android:textSize="40sp"/>
 
 </FrameLayout>
