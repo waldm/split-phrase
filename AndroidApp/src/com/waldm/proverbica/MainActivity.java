@@ -2,6 +2,12 @@ package com.waldm.proverbica;
 
 import java.util.Random;
 
+import com.waldm.proverbica.retriever.FileSayingRetriever;
+import com.waldm.proverbica.retriever.SayingRetriever;
+import com.waldm.proverbica.retriever.WebSayingRetriever;
+import com.waldm.proverbica.settings.SettingsActivity;
+import com.waldm.proverbica.settings.SettingsFragment;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;

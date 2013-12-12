@@ -1,4 +1,4 @@
-package com.waldm.proverbica;
+package com.waldm.proverbica.retriever;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +19,9 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.waldm.proverbica.MainActivity;
+import com.waldm.proverbica.NetworkConnectivity;
+import com.waldm.proverbica.settings.SettingsFragment;
 
 public class WebSayingRetriever extends AsyncTask<String, Void, String>
 		implements SayingRetriever {

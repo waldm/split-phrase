@@ -1,4 +1,4 @@
-package com.waldm.proverbica;
+package com.waldm.proverbica.retriever;
 
 public interface SayingRetriever {
 	void loadImage(String imageName);

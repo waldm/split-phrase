@@ -1,4 +1,7 @@
-package com.waldm.proverbica;
+package com.waldm.proverbica.settings;
+
+import com.waldm.proverbica.R;
+import com.waldm.proverbica.R.xml;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

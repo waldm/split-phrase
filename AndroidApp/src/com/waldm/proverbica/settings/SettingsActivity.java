@@ -1,4 +1,5 @@
-package com.waldm.proverbica;
+package com.waldm.proverbica.settings;
+
 
 import android.app.Activity;
 import android.os.Bundle;
