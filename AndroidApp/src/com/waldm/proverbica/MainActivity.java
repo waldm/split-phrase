@@ -30,8 +30,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ImageHandler imageHandler;
     private Target target;
     private String text;
-    public static final String WEBSITE = "http://proverbica.herokuapp.com/";
-    public static final String SAYING_PAGE = WEBSITE + "saying";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +70,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
+                sayingRetriever = sayingRetriever.loadSayingAndRefresh();
             }
         });
 
@@ -88,7 +86,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         });
 
-        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
+        sayingRetriever = sayingRetriever.loadSayingAndRefresh();
     }
 
     @Override

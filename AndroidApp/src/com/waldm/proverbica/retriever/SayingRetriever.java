@@ -3,9 +3,9 @@ package com.waldm.proverbica.retriever;
 import com.squareup.picasso.Target;
 
 public interface SayingRetriever {
-    SayingRetriever loadSayingAndRefresh(String sayingPage);
+    SayingRetriever loadSayingAndRefresh();
 
-    String loadSaying(String sayingPage);
+    String loadSaying();
 
     void loadImage(String imageName, Target target);
 }

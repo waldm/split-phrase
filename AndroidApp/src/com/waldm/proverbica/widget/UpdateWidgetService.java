@@ -12,7 +12,6 @@ import android.widget.RemoteViews;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.ImageHandler;
-import com.waldm.proverbica.MainActivity;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingDisplayer;
@@ -55,7 +54,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
                 }
             };
 
-            text = sayingRetriever.loadSaying(MainActivity.SAYING_PAGE);
+            text = sayingRetriever.loadSaying();
             sayingRetriever.loadImage(imageHandler.getNextImage(), target);
 
             // Register an onClickListener

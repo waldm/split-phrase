@@ -39,25 +39,25 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     @Override
-    public SayingRetriever loadSayingAndRefresh(String sayingPage) {
+    public SayingRetriever loadSayingAndRefresh() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh(sayingPage);
+            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh();
         } else {
-            sayingDisplayer.setText(loadSaying(sayingPage));
+            sayingDisplayer.setText(loadSaying());
             return this;
         }
     }
 
     @Override
-    public String loadSaying(String sayingPage) {
+    public String loadSaying() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSaying(sayingPage);
+            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSaying();
         } else {
             Log.d(TAG, "Loading saying from file");
             if (sayings == null) {

@@ -20,13 +20,14 @@ import android.util.Log;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import com.waldm.proverbica.MainActivity;
 import com.waldm.proverbica.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class WebSayingRetriever extends AsyncTask<String, Void, String> implements SayingRetriever {
 
-    private static final String IMAGES_DIR = MainActivity.WEBSITE + "images/";
+    private static final String WEBSITE = "http://proverbica.herokuapp.com/";
+    private static final String IMAGES_DIR = WEBSITE + "images/";
+    private static final String SAYING_PAGE = WEBSITE + "saying";
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
     private final Context mainActivity;
     private final SayingDisplayer sayingDisplayer;
@@ -83,22 +84,22 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     }
 
     @Override
-    public SayingRetriever loadSayingAndRefresh(String sayingPage) {
+    public SayingRetriever loadSayingAndRefresh() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
         if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
             Log.d(TAG, "Loading saying from the internet");
-            this.execute(sayingPage);
+            this.execute(SAYING_PAGE);
             return new WebSayingRetriever(mainActivity, sayingDisplayer);
         } else {
-            return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh(sayingPage);
+            return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh();
         }
     }
 
     @Override
-    public String loadSaying(String sayingPage) {
+    public String loadSaying() {
         // TODO Auto-generated method stub
-        return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSaying(sayingPage);
+        return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSaying();
     }
 }
