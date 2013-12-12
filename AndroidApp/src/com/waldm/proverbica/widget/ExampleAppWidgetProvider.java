@@ -30,7 +30,8 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
 			// to the button
 			RemoteViews views = new RemoteViews(context.getPackageName(),
 					R.layout.appwidget_provider_layout);
-			views.setOnClickPendingIntent(R.id.button, pendingIntent);
+			views.setOnClickPendingIntent(R.id.main_widget_layout,
+					pendingIntent);
 
 			// Tell the AppWidgetManager to perform an update on the current app
 			// widget
