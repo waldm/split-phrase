@@ -2,12 +2,6 @@ package com.waldm.proverbica;
 
 import java.util.Random;
 
-import com.waldm.proverbica.retriever.FileSayingRetriever;
-import com.waldm.proverbica.retriever.SayingRetriever;
-import com.waldm.proverbica.retriever.WebSayingRetriever;
-import com.waldm.proverbica.settings.SettingsActivity;
-import com.waldm.proverbica.settings.SettingsFragment;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,105 +16,105 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements
-		OnSharedPreferenceChangeListener {
-	private TextView textBox;
-	private ImageView image;
-	private SayingRetriever sayingRetriever;
-	private int imageIndex;
-	public static final String WEBSITE = "http://proverbica.herokuapp.com/";
-	private static final String SAYING_PAGE = WEBSITE + "saying";
-	protected static final String[] images = { "lion.jpg", "monkey.jpg",
-			"gorilla.jpg", "hawk.jpg", "owl.jpg", "dog.jpg", "tiger.jpg",
-			"polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
+import com.waldm.proverbica.retriever.FileSayingRetriever;
+import com.waldm.proverbica.retriever.SayingDisplayer;
+import com.waldm.proverbica.retriever.SayingRetriever;
+import com.waldm.proverbica.retriever.WebSayingRetriever;
+import com.waldm.proverbica.settings.SettingsActivity;
+import com.waldm.proverbica.settings.SettingsFragment;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
+    private TextView textBox;
+    private ImageView image;
+    private SayingRetriever sayingRetriever;
+    private int imageIndex;
+    public static final String WEBSITE = "http://proverbica.herokuapp.com/";
+    public static final String SAYING_PAGE = WEBSITE + "saying";
+    protected static final String[] images = { "lion.jpg", "monkey.jpg", "gorilla.jpg", "hawk.jpg", "owl.jpg",
+            "dog.jpg", "tiger.jpg", "polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
 
-		setTitle("");
-		textBox = (TextView) findViewById(R.id.text_box);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		image = (ImageView) findViewById(R.id.image);
+        setTitle("");
+        textBox = (TextView) findViewById(R.id.text_box);
 
-		SharedPreferences sharedPref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE,
-				false)) {
-			sayingRetriever = new FileSayingRetriever(this, image);
-		} else {
-			sayingRetriever = new WebSayingRetriever(this, image);
-		}
+        image = (ImageView) findViewById(R.id.image);
 
-		image.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sayingRetriever = sayingRetriever
-						.loadSayingAndRefresh(SAYING_PAGE);
-			}
-		});
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false)) {
+            sayingRetriever = new FileSayingRetriever(this, image, this);
+        } else {
+            sayingRetriever = new WebSayingRetriever(this, image, this);
+        }
 
-		Button button = (Button) findViewById(R.id.button);
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent sendIntent = new Intent();
-				sendIntent.setAction(Intent.ACTION_SEND);
-				sendIntent.putExtra(Intent.EXTRA_TEXT, textBox.getText()
-						+ " - www.proverbica.com");
-				sendIntent.setType("text/plain");
-				startActivity(Intent.createChooser(sendIntent,
-						getString(R.string.share_proverb)));
-			}
-		});
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
+            }
+        });
 
-		sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
-	}
+        Button button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, textBox.getText() + " - www.proverbica.com");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getString(R.string.share_proverb)));
+            }
+        });
 
-	public void setText(String result) {
-		textBox.setText(result);
-		generateNextImageIndex();
-		sayingRetriever.loadImage(images[imageIndex]);
-	}
+        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);
+    }
 
-	private void generateNextImageIndex() {
-		int newImageIndex = new Random().nextInt(images.length);
-		while (newImageIndex == imageIndex) {
-			newImageIndex = new Random().nextInt(images.length);
-		}
+    @Override
+    public void setText(String result) {
+        textBox.setText(result);
+        generateNextImageIndex();
+        sayingRetriever.loadImage(images[imageIndex]);
+    }
 
-		imageIndex = newImageIndex;
-	}
+    private void generateNextImageIndex() {
+        int newImageIndex = new Random().nextInt(images.length);
+        while (newImageIndex == imageIndex) {
+            newImageIndex = new Random().nextInt(images.length);
+        }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main, menu);
-		return true;
-	}
+        imageIndex = newImageIndex;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-			String key) {
-		if (key.equals(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE)) {
-			if (sharedPreferences.getBoolean(key, false)) {
-				sayingRetriever = new FileSayingRetriever(this, image);
-			} else {
-				sayingRetriever = new WebSayingRetriever(this, image);
-			}
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE)) {
+            if (sharedPreferences.getBoolean(key, false)) {
+                sayingRetriever = new FileSayingRetriever(this, image, this);
+            } else {
+                sayingRetriever = new WebSayingRetriever(this, image, this);
+            }
+        }
+    }
 }

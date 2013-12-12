@@ -1,35 +1,30 @@
 package com.waldm.proverbica.widget;
 
-import java.util.Random;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.waldm.proverbica.MainActivity;
 import com.waldm.proverbica.R;
+import com.waldm.proverbica.retriever.FileSayingRetriever;
+import com.waldm.proverbica.retriever.SayingDisplayer;
 
-public class UpdateWidgetService extends Service {
+public class UpdateWidgetService extends Service implements SayingDisplayer {
     @Override
     public void onStart(Intent intent, int startId) {
-        // create some random data
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
         int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         for (int widgetId : allWidgetIds) {
-            // create some random data
-            int number = (new Random().nextInt(100));
-
             RemoteViews remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.appwidget_provider_layout);
-            Log.w("WidgetExample", String.valueOf(number));
             // Set the text
-            remoteViews.setTextViewText(R.id.main_widget_layout, "Random: " + String.valueOf(number));
+            FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, null, this);
+            remoteViews.setTextViewText(R.id.main_widget_layout, sayingRetriever.loadSaying(MainActivity.SAYING_PAGE));
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), ExampleAppWidgetProvider.class);
@@ -50,5 +45,11 @@ public class UpdateWidgetService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void setText(String result) {
+        // TODO Auto-generated method stub
+
     }
 }
