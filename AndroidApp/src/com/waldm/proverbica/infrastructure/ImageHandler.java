@@ -1,4 +1,4 @@
-package com.waldm.proverbica;
+package com.waldm.proverbica.infrastructure;
 
 import java.util.Random;
 

@@ -13,7 +13,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.waldm.proverbica.NetworkConnectivity;
+import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class FileSayingRetriever implements SayingRetriever {

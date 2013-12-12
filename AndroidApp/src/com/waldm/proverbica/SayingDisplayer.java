@@ -1,4 +1,4 @@
-package com.waldm.proverbica.retriever;
+package com.waldm.proverbica;
 
 public interface SayingDisplayer {
 

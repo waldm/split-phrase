@@ -11,10 +11,10 @@ import android.widget.RemoteViews;
 
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
-import com.waldm.proverbica.ImageHandler;
 import com.waldm.proverbica.R;
+import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
-import com.waldm.proverbica.retriever.SayingDisplayer;
 
 public class UpdateWidgetService extends Service implements SayingDisplayer {
     private ImageHandler imageHandler;
