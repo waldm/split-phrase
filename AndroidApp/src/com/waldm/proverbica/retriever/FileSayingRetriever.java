@@ -19,23 +19,23 @@ import com.waldm.proverbica.settings.SettingsFragment;
 public class FileSayingRetriever implements SayingRetriever {
 
     private static final String TAG = FileSayingRetriever.class.getSimpleName();
-    private final String filename = "sayings.txt";
+    private static final String FILENAME = "sayings.txt";
     private List<String> sayings;
-    private final Context mainActivity;
+    private final Context context;
     private final SayingDisplayer sayingDisplayer;
 
-    public FileSayingRetriever(Context mainActivity, SayingDisplayer sayingDisplayer) {
-        this.mainActivity = mainActivity;
+    public FileSayingRetriever(Context context, SayingDisplayer sayingDisplayer) {
+        this.context = context;
         this.sayingDisplayer = sayingDisplayer;
     }
 
     @Override
     public SayingRetriever loadSayingAndRefresh() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh();
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
+            return new WebSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh();
         } else {
             sayingDisplayer.setText(loadSaying());
             return this;
@@ -44,11 +44,11 @@ public class FileSayingRetriever implements SayingRetriever {
 
     @Override
     public String loadSaying() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
-            return new WebSayingRetriever(mainActivity, sayingDisplayer).loadSaying();
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
+            return new WebSayingRetriever(context, sayingDisplayer).loadSaying();
         } else {
             Log.d(TAG, "Loading saying from file");
             if (sayings == null) {
@@ -56,7 +56,7 @@ public class FileSayingRetriever implements SayingRetriever {
 
                 InputStream stream = null;
                 try {
-                    stream = mainActivity.getAssets().open(filename);
+                    stream = context.getAssets().open(FILENAME);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

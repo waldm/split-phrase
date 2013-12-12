@@ -26,11 +26,11 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     public static final String WEBSITE = "http://proverbica.herokuapp.com/";
     private static final String SAYING_PAGE = WEBSITE + "saying";
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
-    private final Context mainActivity;
+    private final Context context;
     private final SayingDisplayer sayingDisplayer;
 
-    public WebSayingRetriever(Context mainActivity, SayingDisplayer sayingDisplayer) {
-        this.mainActivity = mainActivity;
+    public WebSayingRetriever(Context context, SayingDisplayer sayingDisplayer) {
+        this.context = context;
         this.sayingDisplayer = sayingDisplayer;
     }
 
@@ -77,21 +77,21 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
 
     @Override
     public SayingRetriever loadSayingAndRefresh() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(mainActivity) && !alwaysUseFile) {
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
             Log.d(TAG, "Loading saying from the internet");
             this.execute(SAYING_PAGE);
-            return new WebSayingRetriever(mainActivity, sayingDisplayer);
+            return new WebSayingRetriever(context, sayingDisplayer);
         } else {
-            return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSayingAndRefresh();
+            return new FileSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh();
         }
     }
 
     @Override
     public String loadSaying() {
         // TODO Auto-generated method stub
-        return new FileSayingRetriever(mainActivity, sayingDisplayer).loadSaying();
+        return new FileSayingRetriever(context, sayingDisplayer).loadSaying();
     }
 }
