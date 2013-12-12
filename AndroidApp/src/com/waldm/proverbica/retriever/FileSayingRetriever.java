@@ -13,8 +13,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.waldm.proverbica.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
@@ -29,13 +27,6 @@ public class FileSayingRetriever implements SayingRetriever {
     public FileSayingRetriever(Context mainActivity, SayingDisplayer sayingDisplayer) {
         this.mainActivity = mainActivity;
         this.sayingDisplayer = sayingDisplayer;
-    }
-
-    @Override
-    public void loadImage(String imageName, Target target) {
-        Picasso.with(mainActivity)
-                .load(mainActivity.getResources().getIdentifier(imageName.replace(".jpg", ""), "drawable",
-                        mainActivity.getPackageName())).resize(100, 100).into(target);
     }
 
     @Override

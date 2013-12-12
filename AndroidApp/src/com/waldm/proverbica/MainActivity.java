@@ -28,7 +28,6 @@ import com.waldm.proverbica.settings.SettingsFragment;
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private Target target;
     private String text;
 
     @Override
@@ -36,13 +35,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageHandler = new ImageHandler();
-
         setTitle("");
         final TextView textBox = (TextView) findViewById(R.id.text_box);
         final ImageView imageView = (ImageView) findViewById(R.id.image);
 
-        target = new Target() {
+        Target target = new Target() {
             @Override
             public void onPrepareLoad(Drawable arg0) {
                 textBox.setText(R.string.loading_proverb);
@@ -59,6 +56,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 textBox.setText(R.string.failed_to_load_proverb);
             }
         };
+
+        imageHandler = new ImageHandler(this);
+        imageHandler.setTarget(target);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false)) {
@@ -92,7 +92,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void setText(String result) {
         text = result;
-        sayingRetriever.loadImage(imageHandler.getNextImage(), target);
+        imageHandler.loadImage(imageHandler.getNextImage());
     }
 
     @Override

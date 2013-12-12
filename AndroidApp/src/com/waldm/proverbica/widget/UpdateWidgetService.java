@@ -21,7 +21,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
     private String text;
 
     public UpdateWidgetService() {
-        imageHandler = new ImageHandler();
+        imageHandler = new ImageHandler(this);
     }
 
     @Override
@@ -55,7 +55,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
             };
 
             text = sayingRetriever.loadSaying();
-            sayingRetriever.loadImage(imageHandler.getNextImage(), target);
+            imageHandler.setTarget(target);
+            imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), ExampleAppWidgetProvider.class);

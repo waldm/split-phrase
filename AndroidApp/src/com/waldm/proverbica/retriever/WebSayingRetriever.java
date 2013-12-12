@@ -18,15 +18,12 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.waldm.proverbica.NetworkConnectivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class WebSayingRetriever extends AsyncTask<String, Void, String> implements SayingRetriever {
 
-    private static final String WEBSITE = "http://proverbica.herokuapp.com/";
-    private static final String IMAGES_DIR = WEBSITE + "images/";
+    public static final String WEBSITE = "http://proverbica.herokuapp.com/";
     private static final String SAYING_PAGE = WEBSITE + "saying";
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
     private final Context mainActivity;
@@ -76,11 +73,6 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         sayingDisplayer.setText(result);
-    }
-
-    @Override
-    public void loadImage(String imageName, Target target) {
-        Picasso.with(mainActivity).load(IMAGES_DIR + imageName).into(target);
     }
 
     @Override
