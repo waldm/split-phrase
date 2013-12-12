@@ -10,7 +10,7 @@
     android:id="@+id/text_box"
     android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:text="@string/loading_proverb"
+    android:text="@string/press_for_next_proverb"
     android:gravity="center"    
     android:background="@drawable/text_background"
     android:textColor="@android:color/black"

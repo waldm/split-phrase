@@ -26,7 +26,6 @@ import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
-    private ImageView image;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private Target target;
@@ -43,7 +42,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         setTitle("");
         final TextView textBox = (TextView) findViewById(R.id.text_box);
-        image = (ImageView) findViewById(R.id.image);
+        final ImageView imageView = (ImageView) findViewById(R.id.image);
 
         target = new Target() {
             @Override
@@ -53,7 +52,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
             @Override
             public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
-                image.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
                 textBox.setText(text);
             }
 
@@ -70,7 +69,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sayingRetriever = new WebSayingRetriever(this, this);
         }
 
-        image.setOnClickListener(new View.OnClickListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sayingRetriever = sayingRetriever.loadSayingAndRefresh(SAYING_PAGE);

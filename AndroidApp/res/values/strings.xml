@@ -8,5 +8,5 @@
     <string name="pref_always_file">Always load proverbs from file</string>
     <string name="loading_proverb">Loading proverb…</string>
     <string name="failed_to_load_proverb">Failed to load proverb</string>
-
+    <string name="press_for_next_proverb">Press for next proverb</string>
 </resources>
