@@ -38,5 +38,7 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/example_appwidget_info" />
         </receiver>
+        
+        <service android:name="com.waldm.proverbica.widget.UpdateWidgetService"/>
     </application>
 </manifest>
