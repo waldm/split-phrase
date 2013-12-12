@@ -71,7 +71,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
         }
         stopSelf();
 
-        super.onStart(intent, startId);
+        // super.onStart(intent, startId);
     }
 
     @Override
