@@ -5,6 +5,7 @@ import java.util.Random;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.common.base.Preconditions;
 import com.squareup.picasso.Picasso;
@@ -14,6 +15,8 @@ import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class ImageHandler {
+    private static final String TAG = ImageHandler.class.getSimpleName();
+
     private int imageIndex;
     protected static final String[] images = { "lion.jpg", "monkey.jpg", "gorilla.jpg", "hawk.jpg", "owl.jpg",
             "dog.jpg", "tiger.jpg", "polar_bear.jpg", "elephant.jpg", "leopard.jpg", "cat.jpg" };
@@ -22,6 +25,7 @@ public class ImageHandler {
     private Target target;
 
     public ImageHandler(Context context) {
+        Log.d(TAG, "ImageHandler created");
         this.context = context;
     }
 
@@ -48,10 +52,12 @@ public class ImageHandler {
     }
 
     private RequestCreator loadImageFromWeb(String imageName) {
+        Log.d(TAG, "Loading image from web");
         return getImage(IMAGES_DIR + imageName);
     }
 
     private RequestCreator loadImageFromFile(String imageName) {
+        Log.d(TAG, "Loading image from file");
         return getImage(context.getResources().getIdentifier(imageName.replace(".jpg", ""), "drawable",
                 context.getPackageName()));
     }
@@ -74,6 +80,7 @@ public class ImageHandler {
 
     public void loadImage(String imageName, int width, int height) {
         Preconditions.checkNotNull(target, "Must call setTarget before loading image");
+        Log.d(TAG, "Loading and resizing image to " + width + " x " + height);
         loadImageFromSource(imageName).resize(width, height).into(target);
     }
 }

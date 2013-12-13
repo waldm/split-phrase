@@ -53,6 +53,7 @@ public class FileSayingRetriever implements SayingRetriever {
         } else {
             Log.d(TAG, "Loading saying from file");
             if (sayings == null) {
+                Log.d(TAG, "Loading all sayings from file");
                 sayings = new ArrayList<String>();
 
                 InputStream stream = null;
@@ -77,6 +78,7 @@ public class FileSayingRetriever implements SayingRetriever {
             String beginning = sayings.get(random.nextInt(sayings.size())).split("\\|")[0];
             String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
 
+            Log.d(TAG, "Loaded saying from file");
             return beginning + " " + end;
         }
     }

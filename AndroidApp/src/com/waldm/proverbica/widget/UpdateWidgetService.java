@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.squareup.picasso.Picasso.LoadedFrom;
@@ -17,6 +18,8 @@ import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 
 public class UpdateWidgetService extends Service implements SayingDisplayer {
+    private static final String TAG = UpdateWidgetService.class.getSimpleName();
+
     private ImageHandler imageHandler;
     private String text;
 
@@ -26,11 +29,13 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
 
     @Override
     public void onStart(Intent intent, int startId) {
+        Log.d(TAG, "Starting service");
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
         int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         for (int widgetId : allWidgetIds) {
+            Log.d(TAG, "Widget id: " + widgetId);
             final RemoteViews remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.widget_provider_layout);
             // Set the text
@@ -39,17 +44,20 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
             Target target = new Target() {
                 @Override
                 public void onPrepareLoad(Drawable arg0) {
+                    Log.d(TAG, "Target: Loading image");
                     remoteViews.setTextViewText(R.id.text_box, getString(R.string.loading_proverb));
                 }
 
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
+                    Log.d(TAG, "Target: Image loaded");
                     remoteViews.setImageViewBitmap(R.id.image, bitmap);
                     remoteViews.setTextViewText(R.id.text_box, text);
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable arg0) {
+                    Log.d(TAG, "Target: Image failed to load");
                     remoteViews.setTextViewText(R.id.text_box, getString(R.string.failed_to_load_proverb));
                 }
             };

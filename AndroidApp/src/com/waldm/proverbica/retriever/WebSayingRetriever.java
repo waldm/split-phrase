@@ -73,6 +73,7 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        Log.d(TAG, "Loaded saying from the internet");
         sayingDisplayer.setText(result);
     }
 
