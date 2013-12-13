@@ -22,6 +22,7 @@ import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
+import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
@@ -115,8 +116,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onPrepareLoad(Drawable arg0) {
-        Log.d(TAG, "Loading image");
-        textView.setText(R.string.loading_proverb);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
+
+        if (NetworkConnectivity.isNetworkAvailable(this) && !alwaysUseFile) {
+            Log.d(TAG, "Loading image");
+            textView.setText(R.string.loading_proverb);
+        }
     }
 
     @Override
