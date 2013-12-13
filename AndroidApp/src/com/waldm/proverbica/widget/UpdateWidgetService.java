@@ -4,14 +4,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.squareup.picasso.Picasso.LoadedFrom;
-import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
@@ -21,7 +17,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
     private static final String TAG = UpdateWidgetService.class.getSimpleName();
 
     private ImageHandler imageHandler;
-    private String text;
+
+    private WidgetTarget target;
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
@@ -41,28 +38,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer {
             // Set the text
             FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
 
-            Target target = new Target() {
-                @Override
-                public void onPrepareLoad(Drawable arg0) {
-                    Log.d(TAG, "Target: Loading image");
-                    remoteViews.setTextViewText(R.id.text_box, getString(R.string.loading_proverb));
-                }
-
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
-                    Log.d(TAG, "Target: Image loaded");
-                    remoteViews.setImageViewBitmap(R.id.image, bitmap);
-                    remoteViews.setTextViewText(R.id.text_box, text);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable arg0) {
-                    Log.d(TAG, "Target: Image failed to load");
-                    remoteViews.setTextViewText(R.id.text_box, getString(R.string.failed_to_load_proverb));
-                }
-            };
-
-            text = sayingRetriever.loadSaying();
+            target = new WidgetTarget(remoteViews, this);
+            target.setText(sayingRetriever.loadSaying());
             imageHandler.setTarget(target);
             imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
 

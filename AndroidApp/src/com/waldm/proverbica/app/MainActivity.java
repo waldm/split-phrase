@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -16,8 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso.LoadedFrom;
-import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
@@ -30,7 +26,7 @@ import com.waldm.proverbica.settings.SettingsFragment;
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private String text;
+    private MainActivityTarget target;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +37,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         final TextView textBox = (TextView) findViewById(R.id.text_box);
         final ImageView imageView = (ImageView) findViewById(R.id.image);
 
-        Target target = new Target() {
-            @Override
-            public void onPrepareLoad(Drawable arg0) {
-                textBox.setText(R.string.loading_proverb);
-            }
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
-                imageView.setImageBitmap(bitmap);
-                textBox.setText(text);
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable arg0) {
-                textBox.setText(R.string.failed_to_load_proverb);
-            }
-        };
-
+        target = new MainActivityTarget(textBox, imageView);
         imageHandler = new ImageHandler(this);
         imageHandler.setTarget(target);
 
@@ -93,7 +72,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void setText(String result) {
-        text = result;
+        target.setText(result);
         imageHandler.loadImage(imageHandler.getNextImage());
     }
 
