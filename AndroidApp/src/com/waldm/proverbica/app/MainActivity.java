@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +17,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso.LoadedFrom;
+import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
@@ -23,10 +28,14 @@ import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsFragment;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer {
+public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target {
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private MainActivityTarget target;
+    private String text;
+    private TextView textView;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +43,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         setContentView(R.layout.activity_main);
 
         setTitle("");
-        final TextView textBox = (TextView) findViewById(R.id.text_box);
-        final ImageView imageView = (ImageView) findViewById(R.id.image);
+        textView = (TextView) findViewById(R.id.text_box);
+        imageView = (ImageView) findViewById(R.id.image);
 
-        target = new MainActivityTarget(textBox, imageView);
         imageHandler = new ImageHandler(this);
-        imageHandler.setTarget(target);
+        imageHandler.setTarget(this);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false)) {
@@ -61,7 +69,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             public void onClick(View v) {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, textBox.getText() + " - www.proverbica.com");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, textView.getText() + " - www.proverbica.com");
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, getString(R.string.share_proverb)));
             }
@@ -72,7 +80,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void setText(String result) {
-        target.setText(result);
+        text = result;
         imageHandler.loadImage(imageHandler.getNextImage());
     }
 
@@ -103,5 +111,24 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 sayingRetriever = new WebSayingRetriever(this, this);
             }
         }
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable arg0) {
+        Log.d(TAG, "Loading image");
+        textView.setText(R.string.loading_proverb);
+    }
+
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
+        Log.d(TAG, "Image loaded");
+        imageView.setImageBitmap(bitmap);
+        textView.setText(text);
+    }
+
+    @Override
+    public void onBitmapFailed(Drawable arg0) {
+        Log.d(TAG, "Image failed to load");
+        textView.setText(R.string.failed_to_load_proverb);
     }
 }
