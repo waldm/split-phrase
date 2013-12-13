@@ -13,11 +13,10 @@ import android.widget.RemoteViews;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
-import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
-import com.waldm.proverbica.retriever.FileSayingRetriever;
+import com.waldm.proverbica.retriever.SayingRetriever;
 
-public class UpdateWidgetService extends Service implements SayingDisplayer, Target {
+public class UpdateWidgetService extends Service implements Target {
     private static final String TAG = UpdateWidgetService.class.getSimpleName();
 
     private ImageHandler imageHandler;
@@ -40,11 +39,11 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.widget_provider_layout);
             // Set the text
-            FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
+            SayingRetriever sayingRetriever = new SayingRetriever();
 
             text = sayingRetriever.loadSaying();
             imageHandler.setTarget(this);
-            imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
+            imageHandler.loadNextImage(300, 200);
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
@@ -58,8 +57,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
         stopSelf();
-
-        // super.onStart(intent, startId);
     }
 
     @Override
@@ -67,10 +64,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         return null;
     }
 
-    @Override
     public void setText(String result) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
