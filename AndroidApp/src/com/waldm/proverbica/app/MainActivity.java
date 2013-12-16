@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("");
+        setTitle("Proverbica");
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
 
