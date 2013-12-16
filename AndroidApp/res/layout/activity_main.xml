@@ -22,17 +22,5 @@
         android:layout_centerInParent="true"
         android:background="@drawable/text_background"
         android:textColor="@android:color/black" />
-    
-    <Button android:id="@+id/button"
-        android:layout_below="@id/text_box"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_margin="10dp"
-        android:padding="10dp"
-        android:textSize="20sp"
-        android:layout_centerHorizontal="true"
-        android:drawableLeft="@android:drawable/ic_menu_share"
-        android:text="@string/share"        
-        android:background="@drawable/share_button_background"/>
 
 </RelativeLayout>

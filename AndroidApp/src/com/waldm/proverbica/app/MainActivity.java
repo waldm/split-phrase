@@ -10,11 +10,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso.LoadedFrom;
@@ -37,6 +36,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private String text;
     private TextView textView;
     private ImageView imageView;
+
+    private ShareActionProvider shareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,32 +65,34 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         });
 
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, textView.getText() + " - www.proverbica.com");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, getString(R.string.share_proverb)));
-            }
-        });
-
         sayingRetriever = sayingRetriever.loadSayingAndRefresh();
     }
 
     @Override
     public void setText(String result) {
         text = result;
+        if (shareActionProvider != null) {
+            updateShareIntent();
+        }
+
         imageHandler.loadImage(imageHandler.getNextImage());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+
+        updateShareIntent();
         return true;
+    }
+
+    private void updateShareIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " - www.proverbica.com");
+        shareIntent.setType("text/plain");
+        shareActionProvider.setShareIntent(shareIntent);
     }
 
     @Override
