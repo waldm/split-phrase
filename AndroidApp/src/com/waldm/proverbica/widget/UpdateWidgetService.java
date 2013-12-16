@@ -23,6 +23,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     private ImageHandler imageHandler;
     private RemoteViews remoteViews;
     private String text;
+    private int[] allWidgetIds;
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
@@ -33,7 +34,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         Log.d(TAG, "Starting service");
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
 
-        int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+        allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         for (int widgetId : allWidgetIds) {
             Log.d(TAG, "Widget id: " + widgetId);
@@ -57,9 +58,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             remoteViews.setOnClickPendingIntent(R.id.text_box, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
-        stopSelf();
-
-        // super.onStart(intent, startId);
     }
 
     @Override
@@ -133,6 +131,11 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         Log.d(TAG, "Image loaded");
         remoteViews.setImageViewBitmap(R.id.image, bitmap);
         remoteViews.setTextViewText(R.id.text_box, text);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
+
+        for (int widgetId : allWidgetIds) {
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        }
     }
 
     @Override
