@@ -63,6 +63,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void onClick(View v) {
                 sayingRetriever = sayingRetriever.loadSayingAndRefresh();
+                getActionBar().hide();
+            }
+        });
+
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View arg0) {
+                getActionBar().show();
+                return true;
             }
         });
 
