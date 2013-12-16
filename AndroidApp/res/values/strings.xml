@@ -3,7 +3,6 @@
 
     <string name="app_name">Proverbica</string>
     <string name="settings">Settings</string>
-    <string name="share_proverb">Share proverb to…</string>
     <string name="share">Share</string>
     <string name="pref_always_file">Always load proverbs from file</string>
     <string name="loading_proverb">Loading proverb…</string>
