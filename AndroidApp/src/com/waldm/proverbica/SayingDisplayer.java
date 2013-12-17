@@ -2,6 +2,6 @@ package com.waldm.proverbica;
 
 public interface SayingDisplayer {
 
-    void setText(String result);
+    void setSaying(Saying saying);
 
 }

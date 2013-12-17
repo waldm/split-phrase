@@ -13,17 +13,22 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
+import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class FileSayingRetriever implements SayingRetriever {
 
+    private static final String IMAGES_DIR = "file:///android_asset/backgrounds/";
     private static final String TAG = FileSayingRetriever.class.getSimpleName();
     private static final String FILENAME = "sayings.txt";
     private List<String> sayings;
     private final Context context;
     private final SayingDisplayer sayingDisplayer;
+    private String[] backgrounds;
+    private String currentBackground;
 
     public FileSayingRetriever(Context context, SayingDisplayer sayingDisplayer) {
         this.context = context;
@@ -31,25 +36,46 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     @Override
-    public SayingRetriever loadSayingAndRefresh() {
+    public SayingRetriever loadSayingAndRefresh(SayingSource sayingSource) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
-            return new WebSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh();
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile && sayingSource != SayingSource.FILE) {
+            return new WebSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh(sayingSource);
         } else {
-            sayingDisplayer.setText(loadSaying());
+            sayingDisplayer.setSaying(loadSaying(sayingSource));
             return this;
         }
     }
 
-    @Override
-    public String loadSaying() {
+    private String loadImageLocation() {
+        if (backgrounds == null) {
+            try {
+                backgrounds = context.getAssets().list("backgrounds");
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
+                System.exit(1);
+            }
+        }
+
+        int newImageIndex = new Random().nextInt(backgrounds.length);
+        if (currentBackground != null) {
+            while (backgrounds[newImageIndex].equals(currentBackground)) {
+                newImageIndex = new Random().nextInt(backgrounds.length);
+            }
+        }
+
+        currentBackground = backgrounds[newImageIndex];
+
+        return IMAGES_DIR + currentBackground;
+    }
+
+    private String loadSayingText(SayingSource sayingSource) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
-            return new WebSayingRetriever(context, sayingDisplayer).loadSaying();
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile && sayingSource != SayingSource.FILE) {
+            return new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource).getText();
         } else {
             Log.d(TAG, "Loading saying from file");
             if (sayings == null) {
@@ -81,5 +107,10 @@ public class FileSayingRetriever implements SayingRetriever {
             Log.d(TAG, "Loaded saying from file");
             return beginning + " " + end;
         }
+    }
+
+    @Override
+    public Saying loadSaying(SayingSource sayingSource) {
+        return new Saying(loadSayingText(sayingSource), loadImageLocation());
     }
 }

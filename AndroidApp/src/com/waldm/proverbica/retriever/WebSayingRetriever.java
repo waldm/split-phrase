@@ -18,13 +18,16 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
+import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.settings.SettingsFragment;
 
-public class WebSayingRetriever extends AsyncTask<String, Void, String> implements SayingRetriever {
+public class WebSayingRetriever extends AsyncTask<Void, Void, Saying> implements SayingRetriever {
 
-    public static final String WEBSITE = "http://proverbica.herokuapp.com/";
+    private static final String WEBSITE = "http://proverbica.herokuapp.com/";
+    private static final String BACKGROUND_PAGE = "http://proverbica.com/bg";
     private static final String SAYING_PAGE = WEBSITE + "saying";
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
     private final Context context;
@@ -36,10 +39,14 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     }
 
     @Override
-    protected String doInBackground(String... urls) {
+    protected Saying doInBackground(Void... v) {
+        return new Saying(loadSayingText(SayingSource.EITHER), loadImageLocation());
+    }
+
+    private String readWebpage(String url) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpContext localContext = new BasicHttpContext();
-        HttpGet httpGet = new HttpGet(urls[0]);
+        HttpGet httpGet = new HttpGet(url);
         HttpResponse response = null;
         try {
             response = httpClient.execute(httpGet, localContext);
@@ -71,29 +78,36 @@ public class WebSayingRetriever extends AsyncTask<String, Void, String> implemen
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
+    protected void onPostExecute(Saying saying) {
+        super.onPostExecute(saying);
         Log.d(TAG, "Loaded saying from the internet");
-        sayingDisplayer.setText(result);
+        sayingDisplayer.setSaying(saying);
     }
 
     @Override
-    public SayingRetriever loadSayingAndRefresh() {
+    public SayingRetriever loadSayingAndRefresh(SayingSource sayingSource) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
 
-        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile) {
+        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile && sayingSource != SayingSource.FILE) {
             Log.d(TAG, "Loading saying from the internet");
-            this.execute(SAYING_PAGE);
+            this.execute();
             return new WebSayingRetriever(context, sayingDisplayer);
         } else {
-            return new FileSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh();
+            return new FileSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh(sayingSource);
         }
     }
 
+    private String loadSayingText(SayingSource sayingSource) {
+        return readWebpage(SAYING_PAGE);
+    }
+
+    private String loadImageLocation() {
+        return WebSayingRetriever.WEBSITE + readWebpage(BACKGROUND_PAGE);
+    }
+
     @Override
-    public String loadSaying() {
-        // TODO Auto-generated method stub
-        return new FileSayingRetriever(context, sayingDisplayer).loadSaying();
+    public Saying loadSaying(SayingSource sayingSource) {
+        return new Saying(loadSayingText(sayingSource), loadImageLocation());
     }
 }

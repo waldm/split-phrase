@@ -13,8 +13,10 @@ import android.widget.RemoteViews;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
+import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
+import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 
 public class UpdateWidgetService extends Service implements SayingDisplayer, Target {
@@ -24,8 +26,9 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     private ImageHandler imageHandler;
     private RemoteViews remoteViews;
-    private String text;
     private int[] allWidgetIds;
+
+    private Saying saying;
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
@@ -45,13 +48,15 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             // Set the text
             FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
 
-            text = sayingRetriever.loadSaying();
-            while (text.length() > MAXIMUM_SAYING_LENGTH) {
-                text = sayingRetriever.loadSaying();
+            saying = sayingRetriever.loadSaying(SayingSource.FILE);
+            while (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
+                saying = sayingRetriever.loadSaying(SayingSource.FILE);
             }
 
+            Log.d(TAG, "Widget saying: " + saying.getText());
+            Log.d(TAG, "Widget background: " + saying.getImageLocation());
             imageHandler.setTarget(this);
-            imageHandler.loadNextImage(300, 200);
+            imageHandler.loadNextImage(saying.getImageLocation(), 300, 200);
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
@@ -121,7 +126,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void setText(String result) {
+    public void setSaying(Saying saying) {
         // TODO Auto-generated method stub
 
     }
@@ -135,7 +140,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
         Log.d(TAG, "Image loaded");
         remoteViews.setImageViewBitmap(R.id.image, bitmap);
-        remoteViews.setTextViewText(R.id.text_box, text);
+        remoteViews.setTextViewText(R.id.text_box, saying.getText());
         updateUI();
     }
 

@@ -20,9 +20,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
+import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
+import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
@@ -62,7 +64,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sayingRetriever = sayingRetriever.loadSayingAndRefresh();
+                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
                 getActionBar().hide();
             }
         });
@@ -75,19 +77,19 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         });
 
-        sayingRetriever = sayingRetriever.loadSayingAndRefresh();
+        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
-    public void setText(String result) {
-        text = result;
+    public void setSaying(Saying saying) {
+        text = saying.getText();
         if (shareActionProvider != null) {
             updateShareIntent();
         }
 
-        imageHandler.loadNextImage();
+        imageHandler.loadNextImage(saying.getImageLocation());
     }
 
     @Override
