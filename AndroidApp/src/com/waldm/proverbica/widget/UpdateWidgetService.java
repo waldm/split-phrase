@@ -130,16 +130,22 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         Log.d(TAG, "Image loaded");
         remoteViews.setImageViewBitmap(R.id.image, bitmap);
         remoteViews.setTextViewText(R.id.text_box, text);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
-
-        for (int widgetId : allWidgetIds) {
-            appWidgetManager.updateAppWidget(widgetId, remoteViews);
-        }
+        updateUI();
     }
 
     @Override
     public void onBitmapFailed(Drawable arg0) {
         Log.d(TAG, "Image failed to load");
         remoteViews.setTextViewText(R.id.text_box, getString(R.string.failed_to_load_proverb));
+
+        updateUI();
+    }
+
+    private void updateUI() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
+
+        for (int widgetId : allWidgetIds) {
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        }
     }
 }
