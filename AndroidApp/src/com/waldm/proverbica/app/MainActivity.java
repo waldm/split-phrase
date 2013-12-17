@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             updateShareIntent();
         }
 
-        imageHandler.loadImage(imageHandler.getNextImage());
+        imageHandler.loadNextImage();
     }
 
     @Override

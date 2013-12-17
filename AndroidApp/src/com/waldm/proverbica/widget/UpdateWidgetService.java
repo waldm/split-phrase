@@ -51,7 +51,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             }
 
             imageHandler.setTarget(this);
-            imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
+            imageHandler.loadNextImage(300, 200);
 
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);

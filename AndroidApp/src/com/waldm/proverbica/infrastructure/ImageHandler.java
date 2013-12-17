@@ -33,7 +33,7 @@ public class ImageHandler {
         this.target = target;
     }
 
-    public String getNextImage() {
+    private String getNextImage() {
         int newImageIndex = new Random().nextInt(images.length);
         while (newImageIndex == imageIndex) {
             newImageIndex = new Random().nextInt(images.length);
@@ -68,14 +68,14 @@ public class ImageHandler {
         }
     }
 
-    public void loadImage(String imageName) {
+    public void loadNextImage() {
         Preconditions.checkNotNull(target, "Must call setTarget before loading image");
-        loadImageFromSource(imageName).into(target);
+        loadImageFromSource(getNextImage()).into(target);
     }
 
-    public void loadImage(String imageName, int width, int height) {
+    public void loadNextImage(int width, int height) {
         Preconditions.checkNotNull(target, "Must call setTarget before loading image");
         Log.d(TAG, "Loading and resizing image to " + width + " x " + height);
-        loadImageFromSource(imageName).resize(width, height).into(target);
+        loadImageFromSource(getNextImage()).resize(width, height).into(target);
     }
 }
