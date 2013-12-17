@@ -54,7 +54,7 @@ public class ImageHandler {
 
     private RequestCreator loadImageFromFile(String imageName) {
         Log.d(TAG, "Loading image from file");
-        return getImage("file:///android_asset/images/" + imageName);
+        return getImage("file:///android_asset/backgrounds/" + imageName);
     }
 
     private RequestCreator loadImageFromSource(String imageName) {
