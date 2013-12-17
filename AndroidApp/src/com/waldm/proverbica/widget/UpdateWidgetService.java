@@ -123,7 +123,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     @Override
     public void onPrepareLoad(Drawable arg0) {
         Log.d(TAG, "Loading image");
-        remoteViews.setTextViewText(R.id.text_box, getString(R.string.loading_proverb));
     }
 
     @Override
