@@ -4,6 +4,7 @@
     android:minHeight="40dp"
     android:updatePeriodMillis="86400000"
     android:initialLayout="@layout/widget_provider_layout"
+    android:configure="com.waldm.proverbica.widget.WidgetConfigurationActivity"
     android:resizeMode="none"
     android:widgetCategory="home_screen">
 </appwidget-provider>

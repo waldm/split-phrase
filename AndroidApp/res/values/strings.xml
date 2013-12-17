@@ -8,4 +8,5 @@
     <string name="loading_proverb">Loading proverb…</string>
     <string name="failed_to_load_proverb">Failed to load proverb</string>
     <string name="widget_loading">Widget loading…</string>
+    <string name="widget_instructions">• Tap widget text to see next proverb.\n• Tap widget image to launch main app</string>
 </resources>

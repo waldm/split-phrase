@@ -41,5 +41,12 @@
         </receiver>
         
         <service android:name="com.waldm.proverbica.widget.UpdateWidgetService"/>
+        
+        <activity android:name="com.waldm.proverbica.widget.WidgetConfigurationActivity"
+            android:theme="@android:style/Theme.Holo">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
