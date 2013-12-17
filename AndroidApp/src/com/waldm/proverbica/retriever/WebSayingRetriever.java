@@ -25,11 +25,11 @@ import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class WebSayingRetriever extends AsyncTask<Void, Void, Saying> implements SayingRetriever {
+    private static final String TAG = WebSayingRetriever.class.getSimpleName();
 
     private static final String WEBSITE = "http://proverbica.herokuapp.com/";
     private static final String BACKGROUND_PAGE = "http://proverbica.com/bg";
     private static final String SAYING_PAGE = WEBSITE + "saying";
-    private static final String TAG = WebSayingRetriever.class.getSimpleName();
     private final Context context;
     private final SayingDisplayer sayingDisplayer;
 
@@ -40,7 +40,7 @@ public class WebSayingRetriever extends AsyncTask<Void, Void, Saying> implements
 
     @Override
     protected Saying doInBackground(Void... v) {
-        return new Saying(loadSayingText(SayingSource.EITHER), loadImageLocation());
+        return new Saying(loadSayingText(), loadImageLocation());
     }
 
     private String readWebpage(String url) {
@@ -98,7 +98,7 @@ public class WebSayingRetriever extends AsyncTask<Void, Void, Saying> implements
         }
     }
 
-    private String loadSayingText(SayingSource sayingSource) {
+    private String loadSayingText() {
         return readWebpage(SAYING_PAGE);
     }
 
@@ -108,6 +108,6 @@ public class WebSayingRetriever extends AsyncTask<Void, Void, Saying> implements
 
     @Override
     public Saying loadSaying(SayingSource sayingSource) {
-        return new Saying(loadSayingText(sayingSource), loadImageLocation());
+        return new Saying(loadSayingText(), loadImageLocation());
     }
 }

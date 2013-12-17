@@ -20,9 +20,9 @@ import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.settings.SettingsFragment;
 
 public class FileSayingRetriever implements SayingRetriever {
+    private static final String TAG = FileSayingRetriever.class.getSimpleName();
 
     private static final String IMAGES_DIR = "file:///android_asset/backgrounds/";
-    private static final String TAG = FileSayingRetriever.class.getSimpleName();
     private static final String FILENAME = "sayings.txt";
     private List<String> sayings;
     private final Context context;
