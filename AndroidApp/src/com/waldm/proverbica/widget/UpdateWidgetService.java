@@ -15,6 +15,7 @@ import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.app.MainActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
@@ -45,7 +46,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             Log.d(TAG, "Widget id: " + widgetId);
             remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.widget_provider_layout);
-            // Set the text
+
             FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
 
             saying = sayingRetriever.loadSaying(SayingSource.FILE);
@@ -58,15 +59,17 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             imageHandler.setTarget(this);
             imageHandler.loadNextImage(saying.getImageLocation(), 300, 200);
 
-            // Register an onClickListener
-            Intent clickIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
-
-            clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, clickIntent,
+            Intent textIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
+            textIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            textIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
+            PendingIntent textPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, textIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.text_box, pendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.text_box, textPendingIntent);
+
+            Intent imageIntent = new Intent(this.getApplicationContext(), MainActivity.class);
+            PendingIntent imagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, imageIntent, 0);
+            remoteViews.setOnClickPendingIntent(R.id.image, imagePendingIntent);
+
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
