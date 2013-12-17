@@ -47,10 +47,6 @@ public class ImageHandler {
         return Picasso.with(context).load(imageName);
     }
 
-    private RequestCreator getImage(int imageResourceId) {
-        return Picasso.with(context).load(imageResourceId);
-    }
-
     private RequestCreator loadImageFromWeb(String imageName) {
         Log.d(TAG, "Loading image from web");
         return getImage(IMAGES_DIR + imageName);
@@ -58,8 +54,7 @@ public class ImageHandler {
 
     private RequestCreator loadImageFromFile(String imageName) {
         Log.d(TAG, "Loading image from file");
-        return getImage(context.getResources().getIdentifier(imageName.replace(".jpg", ""), "drawable",
-                context.getPackageName()));
+        return getImage("file:///android_asset/images/" + imageName);
     }
 
     private RequestCreator loadImageFromSource(String imageName) {
