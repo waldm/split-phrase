@@ -20,6 +20,8 @@ import com.waldm.proverbica.retriever.FileSayingRetriever;
 public class UpdateWidgetService extends Service implements SayingDisplayer, Target {
     private static final String TAG = UpdateWidgetService.class.getSimpleName();
 
+    private static final int MAXIMUM_SAYING_LENGTH = 55;
+
     private ImageHandler imageHandler;
     private RemoteViews remoteViews;
     private String text;
@@ -44,6 +46,10 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
 
             text = sayingRetriever.loadSaying();
+            while (text.length() > MAXIMUM_SAYING_LENGTH) {
+                text = sayingRetriever.loadSaying();
+            }
+
             imageHandler.setTarget(this);
             imageHandler.loadImage(imageHandler.getNextImage(), 300, 200);
 
