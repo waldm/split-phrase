@@ -47,18 +47,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(),
                     R.layout.widget_provider_layout);
 
-            FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
-
-            saying = sayingRetriever.loadSaying(SayingSource.FILE);
-            while (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
-                saying = sayingRetriever.loadSaying(SayingSource.FILE);
-            }
-
-            Log.d(TAG, "Widget saying: " + saying.getText());
-            Log.d(TAG, "Widget background: " + saying.getImageLocation());
-            imageHandler.setTarget(this);
-            imageHandler.loadNextImage(saying.getImageLocation(), 300, 200);
-
             Intent textIntent = new Intent(this.getApplicationContext(), WidgetProvider.class);
             textIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             textIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
@@ -72,6 +60,17 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
+
+        FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
+        saying = sayingRetriever.loadSaying(SayingSource.FILE);
+        while (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
+            saying = sayingRetriever.loadSaying(SayingSource.FILE);
+        }
+
+        Log.d(TAG, "Widget saying: " + saying.getText());
+        Log.d(TAG, "Widget background: " + saying.getImageLocation());
+        imageHandler.setTarget(this);
+        imageHandler.loadNextImage(saying.getImageLocation(), 300, 200);
     }
 
     @Override
