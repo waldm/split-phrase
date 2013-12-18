@@ -3,9 +3,13 @@
     <CheckBoxPreference 
         android:key="@string/pref_always_file_key"
         android:title="@string/pref_always_file"
-        android:defaultValue="true"/>
+        android:defaultValue="@bool/pref_always_file_default"/>
     <CheckBoxPreference 
         android:key="@string/pref_keep_screen_on_key"
         android:title="@string/pref_keep_screen_on"
-        android:defaultValue="false"/>
+        android:defaultValue="@bool/pref_keep_screen_on_default"/>
+    <CheckBoxPreference 
+        android:key="@string/pref_shake_for_next_proverb_key"
+        android:title="@string/pref_shake_for_next_proverb"
+        android:defaultValue="@bool/pref_shake_for_next_proverb_default"/>
 </PreferenceScreen>

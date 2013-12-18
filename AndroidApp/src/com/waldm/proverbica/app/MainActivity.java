@@ -144,9 +144,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
+        if (SettingsManager.getPrefShakeForNextProverb(this)) {
+            sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+            sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override

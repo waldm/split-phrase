@@ -8,6 +8,8 @@
     <string name="pref_always_file_key">pref_always_file</string>
     <string name="pref_keep_screen_on">Keep screen on</string>
     <string name="pref_keep_screen_on_key">pref_keep_screen_on</string>
+    <string name="pref_shake_for_next_proverb">Shake for next proverb</string>
+    <string name="pref_shake_for_next_proverb_key">pref_shake_for_next_proverb</string>
     <string name="loading_proverb">Loading proverb…</string>
     <string name="failed_to_load_proverb">Failed to load proverb</string>
     <string name="widget_loading">Widget loading…</string>
