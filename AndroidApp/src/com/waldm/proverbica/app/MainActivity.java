@@ -54,8 +54,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         setContentView(R.layout.activity_main);
 
         setTitle(getString(R.string.app_name));
-        textView = (TextView) findViewById(R.id.text_box);
-        imageView = (ImageView) findViewById(R.id.image);
 
         imageHandler = new ImageHandler(this);
         imageHandler.setTarget(this);
@@ -66,6 +64,18 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sayingRetriever = new WebSayingRetriever(this, this);
         }
 
+        textView = (TextView) findViewById(R.id.text_box);
+        imageView = (ImageView) findViewById(R.id.image);
+
+        addClickListeners();
+
+        // Load first saying
+        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    private void addClickListeners() {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,10 +95,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 return true;
             }
         });
-
-        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
