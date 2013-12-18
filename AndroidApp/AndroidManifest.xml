@@ -30,7 +30,7 @@
         <activity
             android:name="com.waldm.proverbica.settings.SettingsActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/settings" android:screenOrientation="sensorLandscape" />
+            android:label="@string/settings" android:screenOrientation="sensorPortrait" />
         
         <activity
             android:name="com.waldm.proverbica.info.InfoActivity"
