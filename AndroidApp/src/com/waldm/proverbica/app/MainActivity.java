@@ -1,5 +1,7 @@
 package com.waldm.proverbica.app;
 
+import java.util.concurrent.TimeUnit;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +13,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.google.common.base.Stopwatch;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
@@ -40,6 +45,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final float SHAKE_THRESHOLD = 800;
+
+    protected static final long SLIDESHOW_TRANSITION = 5000;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private String text;
@@ -47,9 +54,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ImageView imageView;
     private ShareActionProvider shareActionProvider;
     private SensorManager sensorMgr;
+    private Handler handler = new Handler(Looper.getMainLooper());
     private float x, y, z;
     private float last_x, last_y, last_z;
     private long lastUpdate = -1;
+    private boolean slideshowPaused = true;
+    private View slideShowButton;
+    private Runnable hideSlideshowButton;
+    private Runnable moveToNextImage;
+    private Stopwatch stopwatch = Stopwatch.createUnstarted();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +82,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
+        slideShowButton = findViewById(R.id.button_slideshow);
 
         addClickListeners();
 
@@ -85,12 +99,40 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
             }
         });
+
+        slideShowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slideShowButton.setVisibility(View.VISIBLE);
+                if (MainActivity.this.slideshowPaused) {
+                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_play);
+                    handler.removeCallbacks(moveToNextImage);
+                    stopwatch.reset();
+                    if (stopwatch.isRunning()) {
+                        stopwatch.stop();
+                    }
+                } else {
+                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_pause);
+                    stopwatch.reset();
+                    stopwatch.start();
+                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    handler.postDelayed(moveToNextImage, 0);
+                }
+                slideshowPaused = !slideshowPaused;
+                handler.removeCallbacks(hideSlideshowButton);
+                handler.postDelayed(hideSlideshowButton, 2000);
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (stopwatch.isRunning()) {
+            stopwatch.stop();
+        }
 
+        handler.removeCallbacks(hideSlideshowButton);
         if (sensorMgr != null) {
             sensorMgr.unregisterListener(this);
             sensorMgr = null;
@@ -100,6 +142,28 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     protected void onResume() {
         super.onResume();
+
+        hideSlideshowButton = new Runnable() {
+            @Override
+            public void run() {
+                slideShowButton.setBackgroundResource(0);
+            }
+        };
+
+        moveToNextImage = new Runnable() {
+            @Override
+            public void run() {
+                if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
+                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    stopwatch.reset();
+                    stopwatch.start();
+                }
+
+                handler.postDelayed(moveToNextImage, SLIDESHOW_TRANSITION);
+            }
+        };
+
+        handler.postDelayed(hideSlideshowButton, 2000);
 
         if (SettingsManager.getPrefKeepScreenOn(this)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
