@@ -118,6 +118,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         };
 
         handler.postDelayed(showActionBar, 0);
+
+        if (SettingsManager.getPrefKeepScreenOn(this)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     @Override

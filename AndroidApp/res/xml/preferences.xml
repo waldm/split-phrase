@@ -4,4 +4,8 @@
         android:key="@string/pref_always_file_key"
         android:title="@string/pref_always_file"
         android:defaultValue="true"/>
+    <CheckBoxPreference 
+        android:key="@string/pref_keep_screen_on_key"
+        android:title="@string/pref_keep_screen_on"
+        android:defaultValue="false"/>
 </PreferenceScreen>

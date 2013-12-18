@@ -15,4 +15,9 @@ public class SettingsManager {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPref.getBoolean(context.getString(R.string.pref_always_file_key), true);
     }
+
+    public static boolean getPrefKeepScreenOn(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getBoolean(context.getString(R.string.pref_keep_screen_on_key), false);
+    }
 }
