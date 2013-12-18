@@ -30,6 +30,7 @@ import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.info.InfoActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
@@ -181,8 +182,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.menu_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.menu_item_info:
+                startActivity(new Intent(this, InfoActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

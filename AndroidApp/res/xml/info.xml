@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory 
+        android:title="@string/info_about"
+        android:key="@string/info_about_key">
+        <Preference 
+            android:title="@string/info_version"
+            android:key="@string/info_version_key"
+            android:enabled="false" />
+    </PreferenceCategory>
+    <PreferenceCategory 
+        android:title="@string/info_connect"
+        android:key="@string/info_connect_key">
+
+        <Preference 
+            android:title="@string/info_visit_website"
+            android:key="@string/info_visit_website_key" />
+        
+        <Preference 
+            android:title="@string/info_twitter_follow"
+            android:key="@string/info_twitter_follow_key" />
+        
+        <Preference 
+            android:title="@string/info_facebook_like"
+            android:key="@string/info_facebook_like_key" />
+        
+    </PreferenceCategory>
+</PreferenceScreen>
