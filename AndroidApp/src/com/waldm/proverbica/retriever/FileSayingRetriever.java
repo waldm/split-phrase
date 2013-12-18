@@ -9,15 +9,13 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
-import com.waldm.proverbica.settings.SettingsFragment;
+import com.waldm.proverbica.settings.SettingsManager;
 
 public class FileSayingRetriever implements SayingRetriever {
     private static final String TAG = FileSayingRetriever.class.getSimpleName();
@@ -37,10 +35,8 @@ public class FileSayingRetriever implements SayingRetriever {
 
     @Override
     public SayingRetriever loadSayingAndRefresh(SayingSource sayingSource) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
-
-        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile && sayingSource != SayingSource.FILE) {
+        if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
+                && sayingSource != SayingSource.FILE) {
             return new WebSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh(sayingSource);
         } else {
             sayingDisplayer.setSaying(loadSaying(sayingSource));
@@ -71,10 +67,8 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     private String loadSayingText(SayingSource sayingSource) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
-
-        if (NetworkConnectivity.isNetworkAvailable(context) && !alwaysUseFile && sayingSource != SayingSource.FILE) {
+        if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
+                && sayingSource != SayingSource.FILE) {
             return new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource).getText();
         } else {
             Log.d(TAG, "Loading saying from file");

@@ -3,5 +3,5 @@
     <CheckBoxPreference 
         android:key="pref_always_file"
         android:title="@string/pref_always_file"
-        android:defaultValue="false"/>
+        android:defaultValue="true"/>
 </PreferenceScreen>

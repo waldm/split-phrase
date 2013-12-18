@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +33,7 @@ import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
-import com.waldm.proverbica.settings.SettingsFragment;
+import com.waldm.proverbica.settings.SettingsManager;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -61,8 +60,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         imageHandler = new ImageHandler(this);
         imageHandler.setTarget(this);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false)) {
+        if (SettingsManager.getPrefAlwaysUseFile(this)) {
             sayingRetriever = new FileSayingRetriever(this, this);
         } else {
             sayingRetriever = new WebSayingRetriever(this, this);
@@ -162,8 +160,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE)) {
-            if (sharedPreferences.getBoolean(key, false)) {
+        if (key.equals(SettingsManager.KEY_PREF_ALWAYS_USE_FILE)) {
+            if (SettingsManager.getPrefAlwaysUseFile(this)) {
                 sayingRetriever = new FileSayingRetriever(this, this);
             } else {
                 sayingRetriever = new WebSayingRetriever(this, this);
@@ -173,10 +171,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onPrepareLoad(Drawable arg0) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean alwaysUseFile = sharedPref.getBoolean(SettingsFragment.KEY_PREF_ALWAYS_USE_FILE, false);
-
-        if (NetworkConnectivity.isNetworkAvailable(this) && !alwaysUseFile) {
+        if (NetworkConnectivity.isNetworkAvailable(this) && !SettingsManager.getPrefAlwaysUseFile(this)) {
             Log.d(TAG, "Loading image");
             textView.setText(R.string.loading_proverb);
         }
