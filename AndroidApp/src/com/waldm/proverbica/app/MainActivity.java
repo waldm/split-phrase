@@ -1,7 +1,5 @@
 package com.waldm.proverbica.app;
 
-import java.util.concurrent.TimeUnit;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,8 +11,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
-import com.google.common.base.Stopwatch;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
@@ -50,10 +45,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private String text;
     private TextView textView;
     private ImageView imageView;
-    private Handler handler = new Handler(Looper.getMainLooper());
     private ShareActionProvider shareActionProvider;
-    private Runnable showActionBar;
-    private Stopwatch stopwatch = Stopwatch.createUnstarted();
     private SensorManager sensorMgr;
     private float x, y, z;
     private float last_x, last_y, last_z;
@@ -91,19 +83,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void onClick(View v) {
                 sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
-                getActionBar().hide();
-                stopwatch.reset();
-                stopwatch.start();
-            }
-        });
-
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View arg0) {
-                getActionBar().show();
-                stopwatch.reset();
-                stopwatch.start();
-                return true;
             }
         });
     }
@@ -111,8 +90,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     protected void onPause() {
         super.onPause();
-        stopwatch.stop();
-        handler.removeCallbacks(showActionBar);
 
         if (sensorMgr != null) {
             sensorMgr.unregisterListener(this);
@@ -123,23 +100,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     protected void onResume() {
         super.onResume();
-        stopwatch.start();
-
-        showActionBar = new Runnable() {
-            @Override
-            public void run() {
-                if (stopwatch.elapsed(TimeUnit.SECONDS) > 10) {
-                    MainActivity.this.getActionBar().show();
-                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
-                    stopwatch.reset();
-                    stopwatch.start();
-                }
-
-                handler.postDelayed(showActionBar, 10000);
-            }
-        };
-
-        handler.postDelayed(showActionBar, 0);
 
         if (SettingsManager.getPrefKeepScreenOn(this)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
