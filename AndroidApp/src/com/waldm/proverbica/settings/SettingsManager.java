@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.waldm.proverbica.R;
+
 public class SettingsManager {
-    public static final String KEY_PREF_ALWAYS_USE_FILE = "pref_always_file";
 
     private SettingsManager() {
     }
 
     public static boolean getPrefAlwaysUseFile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPref.getBoolean(KEY_PREF_ALWAYS_USE_FILE, true);
+        return sharedPref.getBoolean(context.getString(R.string.pref_always_file_key), true);
     }
 }

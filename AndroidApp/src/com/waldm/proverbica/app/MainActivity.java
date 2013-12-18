@@ -160,7 +160,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(SettingsManager.KEY_PREF_ALWAYS_USE_FILE)) {
+        if (key.equals(getString(R.string.pref_always_file_key))) {
             if (SettingsManager.getPrefAlwaysUseFile(this)) {
                 sayingRetriever = new FileSayingRetriever(this, this);
             } else {
