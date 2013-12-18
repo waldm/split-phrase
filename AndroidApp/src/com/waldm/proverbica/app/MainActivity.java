@@ -8,6 +8,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,9 +39,11 @@ import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsManager;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target {
+public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target,
+        SensorEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final float SHAKE_THRESHOLD = 800;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private String text;
@@ -47,6 +53,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ShareActionProvider shareActionProvider;
     private Runnable showActionBar;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
+    private SensorManager sensorMgr;
+    private float x, y, z;
+    private float last_x, last_y, last_z;
+    private long lastUpdate = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +112,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         super.onPause();
         stopwatch.stop();
         handler.removeCallbacks(showActionBar);
+
+        if (sensorMgr != null) {
+            sensorMgr.unregisterListener(this);
+            sensorMgr = null;
+        }
     }
 
     @Override
@@ -128,6 +143,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         if (SettingsManager.getPrefKeepScreenOn(this)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -198,5 +217,35 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void onBitmapFailed(Drawable arg0) {
         Log.d(TAG, "Image failed to load");
         textView.setText(R.string.failed_to_load_proverb);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor s, int arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            long curTime = System.currentTimeMillis();
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                x = event.values[0];
+                y = event.values[1];
+                z = event.values[2];
+
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+                if (speed > SHAKE_THRESHOLD) {
+                    Log.d(TAG, "Device was shaken");
+                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
     }
 }
