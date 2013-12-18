@@ -142,7 +142,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void updateShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " - www.proverbica.com");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
     }
