@@ -43,7 +43,7 @@ import com.waldm.proverbica.settings.SettingsManager;
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target,
         SensorEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    // test
+
     private static final float SHAKE_THRESHOLD = 800;
 
     protected static final long SLIDESHOW_TRANSITION = 5000;
