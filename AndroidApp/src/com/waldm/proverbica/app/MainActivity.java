@@ -106,6 +106,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             public void onClick(View v) {
                 slideShowButton.setVisibility(View.VISIBLE);
                 if (MainActivity.this.slideshowPaused) {
+                    getActionBar().show();
                     slideShowButton.setBackgroundResource(android.R.drawable.ic_media_play);
                     handler.removeCallbacks(moveToNextImage);
                     stopwatch.reset();
@@ -113,6 +114,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                         stopwatch.stop();
                     }
                 } else {
+                    getActionBar().hide();
                     slideShowButton.setBackgroundResource(android.R.drawable.ic_media_pause);
                     stopwatch.reset();
                     stopwatch.start();
