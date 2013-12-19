@@ -39,6 +39,7 @@ import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsManager;
+import com.waldm.proverbica.widget.SayingIO;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target,
         SensorEventListener {
@@ -173,6 +174,12 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
             sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        Saying saying = SayingIO.readSaying(this);
+        if (saying != null) {
+            SayingIO.clearFile(this);
+            setSaying(saying);
         }
     }
 

@@ -144,6 +144,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         remoteViews.setImageViewBitmap(R.id.image, bitmap);
         remoteViews.setTextViewText(R.id.text_box, saying.getText());
         updateUI();
+        SayingIO.writeSaying(saying, this);
     }
 
     @Override
