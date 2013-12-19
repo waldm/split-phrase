@@ -38,8 +38,11 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     @Override
     public void onStart(Intent intent, int startId) {
         Log.d(TAG, "Starting service");
+        if (intent == null) {
+            Log.d(TAG, "Intent is null, so returning early");
+            return;
+        }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.getApplicationContext());
-
         allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         for (int widgetId : allWidgetIds) {
