@@ -106,6 +106,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             public void onClick(View v) {
                 slideShowButton.setVisibility(View.VISIBLE);
                 if (MainActivity.this.slideshowPaused) {
+                    getActionBar().hide();
+                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_pause);
+                    stopwatch.reset();
+                    stopwatch.start();
+                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    handler.postDelayed(moveToNextImage, 0);
+                } else {
                     getActionBar().show();
                     slideShowButton.setBackgroundResource(android.R.drawable.ic_media_play);
                     handler.removeCallbacks(moveToNextImage);
@@ -113,14 +120,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     if (stopwatch.isRunning()) {
                         stopwatch.stop();
                     }
-                } else {
-                    getActionBar().hide();
-                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_pause);
-                    stopwatch.reset();
-                    stopwatch.start();
-                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
-                    handler.postDelayed(moveToNextImage, 0);
                 }
+
                 slideshowPaused = !slideshowPaused;
                 handler.removeCallbacks(hideSlideshowButton);
                 handler.postDelayed(hideSlideshowButton, 2000);
