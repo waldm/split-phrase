@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     private static final float SHAKE_THRESHOLD = 800;
 
-    protected static final long SLIDESHOW_TRANSITION = 5000;
+    protected static final long SLIDESHOW_TRANSITION = 3000;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private String text;
