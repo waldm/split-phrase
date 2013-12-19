@@ -117,9 +117,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     slideShowButton.setBackgroundResource(android.R.drawable.ic_media_play);
                     handler.removeCallbacks(moveToNextImage);
                     stopwatch.reset();
-                    if (stopwatch.isRunning()) {
-                        stopwatch.stop();
-                    }
                 }
 
                 slideshowPaused = !slideshowPaused;
