@@ -46,8 +46,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final float SHAKE_THRESHOLD = 800;
-
     protected static final long SLIDESHOW_TRANSITION = 3000;
+    private static final int SLIDESHOW_BUTTON_HIDE_TIME = 2000;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private String text;
@@ -121,7 +121,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
                 slideshowPaused = !slideshowPaused;
                 handler.removeCallbacks(hideSlideshowButton);
-                handler.postDelayed(hideSlideshowButton, 2000);
+                handler.postDelayed(hideSlideshowButton, SLIDESHOW_BUTTON_HIDE_TIME);
             }
         });
     }
@@ -164,7 +164,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         };
 
-        handler.postDelayed(hideSlideshowButton, 2000);
+        handler.postDelayed(hideSlideshowButton, SLIDESHOW_BUTTON_HIDE_TIME);
 
         if (SettingsManager.getPrefKeepScreenOn(this)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
