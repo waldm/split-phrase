@@ -52,7 +52,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final int BUTTON_HIDE_TIME = 2000;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private String text;
+    private Saying saying;
     private TextView textView;
     private ImageView imageView;
     private ShareActionProvider shareActionProvider;
@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
+    protected boolean favouritesButtonIsVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +140,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         favouritesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                favouritesButton.setImageResource(android.R.drawable.btn_star);
+                saying.negateFavourited();
+                favouritesButton.setImageResource(saying.isFavourited() ? android.R.drawable.btn_star_big_on
+                        : android.R.drawable.btn_star);
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
             }
@@ -205,6 +208,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 favouritesButton.setImageBitmap(null);
+                favouritesButtonIsVisible = false;
             }
         };
     }
@@ -216,7 +220,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void setSaying(Saying saying) {
-        text = saying.getText();
+        this.saying = saying;
         if (shareActionProvider != null) {
             updateShareIntent();
         }
@@ -236,7 +240,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void updateShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " - http://proverbica.com");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, saying.getText() + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
     }
@@ -281,7 +285,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
         Log.d(TAG, "Image loaded");
         imageView.setImageBitmap(bitmap);
-        textView.setText(text);
+        textView.setText(saying.getText());
     }
 
     @Override
