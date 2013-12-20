@@ -70,7 +70,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
-    protected boolean favouritesButtonIsVisible;
     private List<String> favourites;
     private Menu menu;
 
@@ -152,6 +151,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                         : android.R.drawable.btn_star);
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
+                FavouritesIO.writeFavourites(favourites, MainActivity.this);
             }
         });
     }
@@ -227,8 +227,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 favouritesButton.setImageBitmap(null);
-                favouritesButtonIsVisible = false;
-                FavouritesIO.writeFavourites(favourites, MainActivity.this);
             }
         };
     }

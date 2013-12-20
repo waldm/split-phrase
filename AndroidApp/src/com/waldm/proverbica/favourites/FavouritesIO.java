@@ -10,13 +10,16 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.common.collect.Lists;
 
 public class FavouritesIO {
     private static final String FAVOURITES_FILENAME = "favourites";
+    private static final String TAG = FavouritesIO.class.getSimpleName();
 
     public static void writeFavourites(List<String> favourites, Context context) {
+        Log.d(TAG, "Writing favourites");
         try {
             FileOutputStream stream = context.openFileOutput(FAVOURITES_FILENAME, Context.MODE_PRIVATE);
             OutputStreamWriter writer = new OutputStreamWriter(stream);
@@ -24,10 +27,15 @@ public class FavouritesIO {
                 writer.write(favourite + "\n");
             }
             writer.close();
-        } catch (FileNotFoundException e) {} catch (IOException e) {}
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Failed to write favourites, file not found");
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to write favourites");
+        }
     }
 
     public static List<String> readFavourites(Context context) {
+        Log.d(TAG, "Reading favourites");
         List<String> favourites = Lists.newArrayList();
         try {
             FileInputStream stream = context.openFileInput(FAVOURITES_FILENAME);
@@ -39,7 +47,11 @@ public class FavouritesIO {
             }
             reader.close();
             stream.close();
-        } catch (FileNotFoundException e) {} catch (IOException e) {}
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Failed to read favourites, file not found");
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to read favourites");
+        }
 
         return favourites;
     }
