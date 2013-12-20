@@ -39,16 +39,22 @@ public class FavouritesActivity extends ListActivity {
     }
 
     private static final String PROVERB_KEY = "proverb_key";
-    private List<ProverbListItem> list = Lists.newArrayList();
+    private List<ProverbListItem> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
-        list.add(new ProverbListItem("Too many cooks spoil the broth"));
-        list.add(new ProverbListItem("Too many cooks spoil the tea"));
-        list.add(new ProverbListItem("Too many cooks spoil the gin"));
-        list.add(new ProverbListItem("Too many cooks spoil the cereal"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<String> favourites = FavouritesIO.readFavourites(this);
+        list = Lists.newArrayList();
+        for (String favourite : favourites) {
+            list.add(new ProverbListItem(favourite));
+        }
 
         List<Map<String, String>> adapterList = Lists.newArrayList();
         for (ProverbListItem listItem : list) {
@@ -58,6 +64,20 @@ public class FavouritesActivity extends ListActivity {
         ListAdapter adapter = new SimpleAdapter(this, adapterList, R.layout.list_item_favourites,
                 new String[] { PROVERB_KEY }, new int[] { R.id.text });
         setListAdapter(adapter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setListAdapter(null);
+        List<String> favourites = Lists.newArrayList();
+        for (ProverbListItem proverb : list) {
+            if (proverb.isFavourited()) {
+                favourites.add(proverb.getText());
+            }
+        }
+
+        FavouritesIO.writeFavourites(favourites, this);
     }
 
     @Override

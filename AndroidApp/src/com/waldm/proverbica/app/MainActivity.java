@@ -1,5 +1,6 @@
 package com.waldm.proverbica.app;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
@@ -31,6 +32,7 @@ import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.favourites.FavouritesActivity;
+import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
@@ -69,6 +71,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
     protected boolean favouritesButtonIsVisible;
+
+    private List<String> favourites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +198,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
+
+        favourites = FavouritesIO.readFavourites(this);
     }
 
     private void initialiseHideButtonRunnables() {
@@ -209,6 +215,12 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             public void run() {
                 favouritesButton.setImageBitmap(null);
                 favouritesButtonIsVisible = false;
+                if (saying.isFavourited() && !favourites.contains(saying.getText())) {
+                    favourites.add(saying.getText());
+                } else if (!saying.isFavourited() && favourites.contains(saying.getText())) {
+                    favourites.remove(saying.getText());
+                }
+                FavouritesIO.writeFavourites(favourites, MainActivity.this);
             }
         };
     }
