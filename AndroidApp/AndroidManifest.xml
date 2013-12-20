@@ -30,12 +30,17 @@
         <activity
             android:name="com.waldm.proverbica.settings.SettingsActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/settings" android:screenOrientation="sensorPortrait" />
+            android:label="@string/settings" android:screenOrientation="portrait" />
         
         <activity
             android:name="com.waldm.proverbica.info.InfoActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/info" android:screenOrientation="sensorPortrait" />
+            android:label="@string/info" android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="com.waldm.proverbica.favourites.FavouritesActivity"
+            android:theme="@android:style/Theme.Holo"
+            android:label="@string/favourites" android:screenOrientation="portrait" />
         
         
         <receiver android:name="com.waldm.proverbica.widget.WidgetProvider" >
