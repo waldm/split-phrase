@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.SimpleAdapter;
 
 import com.google.common.collect.ImmutableMap;
@@ -40,6 +43,7 @@ public class FavouritesActivity extends ListActivity {
 
     private static final String PROVERB_KEY = "proverb_key";
     private List<ProverbListItem> list;
+    private ShareActionProvider shareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,5 +91,27 @@ public class FavouritesActivity extends ListActivity {
         list.get(position).negateFavourited();
         image.setImageResource(list.get(position).isFavourited() ? android.R.drawable.btn_star_big_on
                 : android.R.drawable.btn_star_big_off);
+        updateShareIntent();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.favourites, menu);
+        shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+
+        updateShareIntent();
+        return true;
+    }
+
+    private void updateShareIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        String favourites = "";
+        for (ProverbListItem favourite : list) {
+            favourites += favourite.getText() + "\n";
+        }
+        shareIntent.putExtra(Intent.EXTRA_TEXT, favourites);
+        shareIntent.setType("text/plain");
+        shareActionProvider.setShareIntent(shareIntent);
     }
 }
