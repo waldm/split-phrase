@@ -31,5 +31,13 @@
         android:padding="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"/>
+    
+    <ImageView android:id="@+id/button_favourite"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@android:drawable/btn_star"
+        android:padding="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

@@ -6,6 +6,11 @@
         android:title="@string/share"
         android:actionProviderClass="android.widget.ShareActionProvider" />
     <item
+        android:id="@+id/menu_item_favourites"
+        android:icon="@android:drawable/btn_star"
+        android:showAsAction="ifRoom"
+        android:title="@string/favourites" />
+    <item
         android:id="@+id/menu_item_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:showAsAction="ifRoom"
@@ -15,5 +20,4 @@
         android:icon="@android:drawable/ic_menu_info_details"
         android:showAsAction="ifRoom"
         android:title="@string/info" />
-
 </menu>
