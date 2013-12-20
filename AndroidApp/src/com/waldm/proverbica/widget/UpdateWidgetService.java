@@ -25,6 +25,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     private static final int MAXIMUM_SAYING_LENGTH = 55;
 
+    public static final String EXTRA_STARTED_VIA_WIDGET = "ExtraStartedViaWidget";
+
     private ImageHandler imageHandler;
     private RemoteViews remoteViews;
     private int[] allWidgetIds;
@@ -58,6 +60,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             remoteViews.setOnClickPendingIntent(R.id.text_box, textPendingIntent);
 
             Intent imageIntent = new Intent(this.getApplicationContext(), MainActivity.class);
+            imageIntent.putExtra(EXTRA_STARTED_VIA_WIDGET, true);
             PendingIntent imagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, imageIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.image, imagePendingIntent);
 

@@ -14,7 +14,6 @@ import com.waldm.proverbica.Saying;
 
 public class SayingIO {
     private static final String SAYING_SOURCE_WIDGET = "Widget";
-    private static final String SAYING_SOURCE_APP = "App";
     private static final String CURRENT_SAYING_FILENAME = "currentSaying";
 
     public static void writeSaying(Saying saying, Context context) {
@@ -24,15 +23,6 @@ public class SayingIO {
             writer.write(SAYING_SOURCE_WIDGET + "\n");
             writer.write(saying.getText() + "\n");
             writer.write(saying.getImageLocation() + "\n");
-            writer.close();
-        } catch (FileNotFoundException e) {} catch (IOException e) {}
-    }
-
-    public static void clearFile(Context context) {
-        try {
-            FileOutputStream stream = context.openFileOutput(CURRENT_SAYING_FILENAME, Context.MODE_PRIVATE);
-            OutputStreamWriter writer = new OutputStreamWriter(stream);
-            writer.write(SAYING_SOURCE_APP + "\n");
             writer.close();
         } catch (FileNotFoundException e) {} catch (IOException e) {}
     }
