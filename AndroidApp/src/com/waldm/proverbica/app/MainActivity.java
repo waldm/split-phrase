@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     private static final float SHAKE_THRESHOLD = 800;
     protected static final long SLIDESHOW_TRANSITION = 3000;
-    private static final int SLIDESHOW_BUTTON_HIDE_TIME = 2000;
+    private static final int BUTTON_HIDE_TIME = 2000;
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private String text;
@@ -62,6 +62,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private long lastUpdate = -1;
     private boolean slideshowRunning;
     private ImageView slideShowButton;
+    private ImageView favouritesButton;
+    private Runnable hideFavouritesButton;
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
@@ -85,6 +87,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
         slideShowButton = (ImageView) findViewById(R.id.button_slideshow);
+        favouritesButton = (ImageView) findViewById(R.id.button_favourite);
 
         addClickListeners();
 
@@ -112,7 +115,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         slideShowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                slideShowButton.setVisibility(View.VISIBLE);
                 if (MainActivity.this.slideshowRunning) {
                     getActionBar().show();
                     slideShowButton.setImageResource(android.R.drawable.ic_media_play);
@@ -129,7 +131,16 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
                 slideshowRunning = !slideshowRunning;
                 handler.removeCallbacks(hideSlideshowButton);
-                handler.postDelayed(hideSlideshowButton, SLIDESHOW_BUTTON_HIDE_TIME);
+                hideButtons(BUTTON_HIDE_TIME);
+            }
+        });
+
+        favouritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favouritesButton.setImageResource(android.R.drawable.btn_star);
+                handler.removeCallbacks(hideFavouritesButton);
+                hideButtons(BUTTON_HIDE_TIME);
             }
         });
     }
@@ -142,6 +153,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         handler.removeCallbacks(hideSlideshowButton);
+        handler.removeCallbacks(hideFavouritesButton);
         if (sensorMgr != null) {
             sensorMgr.unregisterListener(this);
             sensorMgr = null;
@@ -152,12 +164,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onResume() {
         super.onResume();
 
-        hideSlideshowButton = new Runnable() {
-            @Override
-            public void run() {
-                slideShowButton.setImageResource(0);
-            }
-        };
+        initialiseHideButtonRunnables();
 
         moveToNextImage = new Runnable() {
             @Override
@@ -172,7 +179,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         };
 
-        handler.postDelayed(hideSlideshowButton, SLIDESHOW_BUTTON_HIDE_TIME);
+        hideButtons(BUTTON_HIDE_TIME);
 
         if (SettingsManager.getPrefKeepScreenOn(this)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -183,6 +190,27 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
+    }
+
+    private void initialiseHideButtonRunnables() {
+        hideSlideshowButton = new Runnable() {
+            @Override
+            public void run() {
+                slideShowButton.setImageBitmap(null);
+            }
+        };
+
+        hideFavouritesButton = new Runnable() {
+            @Override
+            public void run() {
+                favouritesButton.setImageBitmap(null);
+            }
+        };
+    }
+
+    private void hideButtons(int hideTime) {
+        handler.postDelayed(hideSlideshowButton, hideTime);
+        handler.postDelayed(hideFavouritesButton, hideTime);
     }
 
     @Override
