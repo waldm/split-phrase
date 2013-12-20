@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private float last_x, last_y, last_z;
     private long lastUpdate = -1;
     private boolean slideshowRunning;
-    private View slideShowButton;
+    private ImageView slideShowButton;
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
@@ -84,7 +84,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
-        slideShowButton = findViewById(R.id.button_slideshow);
+        slideShowButton = (ImageView) findViewById(R.id.button_slideshow);
 
         addClickListeners();
 
@@ -115,12 +115,12 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 slideShowButton.setVisibility(View.VISIBLE);
                 if (MainActivity.this.slideshowRunning) {
                     getActionBar().show();
-                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_play);
+                    slideShowButton.setImageResource(android.R.drawable.ic_media_play);
                     handler.removeCallbacks(moveToNextImage);
                     stopwatch.reset();
                 } else {
                     getActionBar().hide();
-                    slideShowButton.setBackgroundResource(android.R.drawable.ic_media_pause);
+                    slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
                     stopwatch.reset();
                     stopwatch.start();
                     sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
@@ -155,7 +155,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         hideSlideshowButton = new Runnable() {
             @Override
             public void run() {
-                slideShowButton.setBackgroundResource(0);
+                slideShowButton.setImageResource(0);
             }
         };
 

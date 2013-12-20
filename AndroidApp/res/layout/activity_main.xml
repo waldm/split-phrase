@@ -25,10 +25,10 @@
         android:textColor="@android:color/black" />
     
     <ImageView android:id="@+id/button_slideshow"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@android:drawable/ic_media_play"
-        android:layout_margin="10dp"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@android:drawable/ic_media_play"
+        android:padding="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"/>
 
