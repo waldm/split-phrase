@@ -96,16 +96,20 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         addClickListeners();
 
-        // Load first saying
-        sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (getIntent().getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
+            // Load saying currently being shown in widget
             Saying saying = SayingIO.readSaying(this);
             if (saying != null) {
                 setSaying(saying);
+            } else {
+                // Load first saying
+                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
             }
+        } else {
+            // Load first saying
+            sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
         }
     }
 
