@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Proverbica</string>
+    <string name="delete">Delete</string>
     <string name="failed_to_load_proverb">Failed to load proverb</string>
     <string name="favourites">Favourites</string>
     <string name="info">Info</string>
