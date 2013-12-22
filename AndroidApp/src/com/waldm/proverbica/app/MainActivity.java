@@ -315,6 +315,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.d(TAG, "Image loaded");
         imageView.setImageBitmap(bitmap);
         textView.setText(text);
+        favouritesButton.setImageResource(android.R.drawable.btn_star);
+        favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
     }
 
     @Override
