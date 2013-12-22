@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         SensorEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final float BUTTON_TRANSPARENCY = 0.3f;
     private static final float SHAKE_THRESHOLD = 800;
     protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
@@ -125,6 +126,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         slideShowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                slideShowButton.setAlpha(1f);
                 if (MainActivity.this.slideshowRunning) {
                     getActionBar().show();
                     slideShowButton.setImageResource(android.R.drawable.ic_media_play);
@@ -153,6 +155,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 updateFavouritesMenuItemDrawable();
                 favouritesButton.setImageResource(favourites.contains(text) ? android.R.drawable.btn_star_big_on
                         : android.R.drawable.btn_star);
+                favouritesButton.setAlpha(1f);
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
                 FavouritesIO.writeFavourites(favourites, MainActivity.this);
@@ -223,14 +226,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         hideSlideshowButton = new Runnable() {
             @Override
             public void run() {
-                slideShowButton.setImageBitmap(null);
+                slideShowButton.setAlpha(BUTTON_TRANSPARENCY);
             }
         };
 
         hideFavouritesButton = new Runnable() {
             @Override
             public void run() {
-                favouritesButton.setImageBitmap(null);
+                favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
             }
         };
     }
