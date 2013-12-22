@@ -30,11 +30,12 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     private ImageHandler imageHandler;
     private RemoteViews remoteViews;
     private int[] allWidgetIds;
-
     private Saying saying;
+    private final FileSayingRetriever sayingRetriever;
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
+        sayingRetriever = new FileSayingRetriever(this, this);
     }
 
     @Override
@@ -67,11 +68,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
 
-        FileSayingRetriever sayingRetriever = new FileSayingRetriever(this, this);
-        saying = sayingRetriever.loadSaying(SayingSource.FILE);
-        while (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
-            saying = sayingRetriever.loadSaying(SayingSource.FILE);
-        }
+        sayingRetriever.loadSaying(SayingSource.FILE);
 
         Log.d(TAG, "Widget saying: " + saying.getText());
         Log.d(TAG, "Widget background: " + saying.getImageLocation());
@@ -135,8 +132,11 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     @Override
     public void setSaying(Saying saying) {
-        // TODO Auto-generated method stub
-
+        if (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
+            sayingRetriever.loadSaying(SayingSource.FILE);
+        } else {
+            this.saying = saying;
+        }
     }
 
     @Override

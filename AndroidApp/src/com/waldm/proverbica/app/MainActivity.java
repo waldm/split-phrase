@@ -105,11 +105,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 setSaying(saying);
             } else {
                 // Load first saying
-                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                sayingRetriever.loadSaying(SayingSource.EITHER);
             }
         } else {
             // Load first saying
-            sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+            sayingRetriever.loadSaying(SayingSource.EITHER);
         }
     }
 
@@ -118,7 +118,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void onClick(View v) {
                 text = null;
-                sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                sayingRetriever.loadSaying(SayingSource.EITHER);
             }
         });
 
@@ -135,7 +135,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
                     stopwatch.reset();
                     stopwatch.start();
-                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER);
                     handler.postDelayed(moveToNextImage, 0);
                 }
 
@@ -185,7 +185,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER);
                     stopwatch.reset();
                     stopwatch.start();
                 }
@@ -341,7 +341,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 if (speed > SHAKE_THRESHOLD) {
                     Log.d(TAG, "Device was shaken");
-                    sayingRetriever = sayingRetriever.loadSayingAndRefresh(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER);
                 }
                 last_x = x;
                 last_y = y;

@@ -34,13 +34,12 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     @Override
-    public SayingRetriever loadSayingAndRefresh(SayingSource sayingSource) {
+    public void loadSaying(SayingSource sayingSource) {
         if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
                 && sayingSource != SayingSource.FILE) {
-            return new WebSayingRetriever(context, sayingDisplayer).loadSayingAndRefresh(sayingSource);
+            new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource);
         } else {
-            sayingDisplayer.setSaying(loadSaying(sayingSource));
-            return this;
+            sayingDisplayer.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation()));
         }
     }
 
@@ -67,44 +66,34 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     private String loadSayingText(SayingSource sayingSource) {
-        if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
-                && sayingSource != SayingSource.FILE) {
-            return new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource).getText();
-        } else {
-            Log.d(TAG, "Loading saying from file");
-            if (sayings == null) {
-                Log.d(TAG, "Loading all sayings from file");
-                sayings = new ArrayList<String>();
+        Log.d(TAG, "Loading saying from file");
+        if (sayings == null) {
+            Log.d(TAG, "Loading all sayings from file");
+            sayings = new ArrayList<String>();
 
-                InputStream stream = null;
-                try {
-                    stream = context.getAssets().open(FILENAME);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                String saying;
-                try {
-                    while ((saying = reader.readLine()) != null) {
-                        sayings.add(saying);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            InputStream stream = null;
+            try {
+                stream = context.getAssets().open(FILENAME);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            Random random = new Random();
-            String beginning = sayings.get(random.nextInt(sayings.size())).split("\\|")[0];
-            String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
-
-            Log.d(TAG, "Loaded saying from file");
-            return beginning + " " + end;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String saying;
+            try {
+                while ((saying = reader.readLine()) != null) {
+                    sayings.add(saying);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
-    @Override
-    public Saying loadSaying(SayingSource sayingSource) {
-        return new Saying(loadSayingText(sayingSource), loadImageLocation());
+        Random random = new Random();
+        String beginning = sayings.get(random.nextInt(sayings.size())).split("\\|")[0];
+        String end = sayings.get(random.nextInt(sayings.size())).split("\\|")[1];
+
+        Log.d(TAG, "Loaded saying from file");
+        return beginning + " " + end;
     }
 }
