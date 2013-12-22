@@ -6,9 +6,13 @@ import java.util.Map;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
@@ -21,7 +25,6 @@ import com.waldm.proverbica.R;
 public class FavouritesActivity extends ListActivity {
     private class ProverbListItem {
         private String text;
-        private boolean isSelected;
 
         private ProverbListItem(String text) {
             this.text = text;
@@ -29,14 +32,6 @@ public class FavouritesActivity extends ListActivity {
 
         public String getText() {
             return text;
-        }
-
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        public void negateSelected() {
-            isSelected = !isSelected;
         }
 
         @Override
@@ -49,7 +44,6 @@ public class FavouritesActivity extends ListActivity {
     private List<Map<String, ProverbListItem>> list;
     private ShareActionProvider shareActionProvider;
     private SimpleAdapter adapter;
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +63,50 @@ public class FavouritesActivity extends ListActivity {
         adapter = new SimpleAdapter(this, list, R.layout.list_item_favourites, new String[] { PROVERB_KEY },
                 new int[] { R.id.text });
         setListAdapter(adapter);
+        getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+        getListView().setMultiChoiceModeListener(new MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                // Here you can do something when items are
+                // selected/de-selected,
+                // such as update the title in the CAB
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_item_delete:
+                        deleteSelectedItems();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.favourites, menu);
+                shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are
+                // deselected/unchecked.
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                return false;
+            }
+        });
     }
 
     @Override
@@ -80,56 +118,17 @@ public class FavouritesActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        list.get(position).get(PROVERB_KEY).negateSelected();
-        CheckedTextView checkedView = (CheckedTextView) v;
-        checkedView.setChecked(list.get(position).get(PROVERB_KEY).isSelected());
         updateShareIntent();
-        updateMenu();
-    }
-
-    private void updateMenu() {
-        for (Map<String, ProverbListItem> favourite : list) {
-            if (favourite.get(PROVERB_KEY).isSelected()) {
-                menu.findItem(R.id.menu_item_share).setVisible(true);
-                menu.findItem(R.id.menu_item_delete).setVisible(true);
-                return;
-            }
-        }
-
-        menu.findItem(R.id.menu_item_share).setVisible(false);
-        menu.findItem(R.id.menu_item_delete).setVisible(false);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.favourites, menu);
-        shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
-
-        updateShareIntent();
-        this.menu = menu;
-        updateMenu();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_delete:
-                deleteSelectedItems();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void deleteSelectedItems() {
         List<String> toKeep = Lists.newArrayList();
         List<Map<String, ProverbListItem>> toDelete = Lists.newArrayList();
-        for (Map<String, ProverbListItem> favourite : list) {
-            if (favourite.get(PROVERB_KEY).isSelected()) {
-                toDelete.add(favourite);
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (getListView().isItemChecked(i)) {
+                toDelete.add(list.get(i));
             } else {
-                toKeep.add(favourite.get(PROVERB_KEY).getText());
+                toKeep.add(list.get(i).get(PROVERB_KEY).getText());
             }
         }
         for (Map<String, ProverbListItem> favourite : toDelete) {
@@ -140,7 +139,7 @@ public class FavouritesActivity extends ListActivity {
         for (int i = 0; i < list.size(); i++) {
             View v = adapter.getView(i, null, null);
             CheckedTextView checkedView = (CheckedTextView) v;
-            checkedView.setChecked(false);
+            // checkedView.setChecked(false);
         }
 
         getListView().invalidateViews();
@@ -149,12 +148,16 @@ public class FavouritesActivity extends ListActivity {
     }
 
     private void updateShareIntent() {
+        if (shareActionProvider == null) {
+            return;
+        }
+
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String favourites = "";
-        for (Map<String, ProverbListItem> favourite : list) {
-            if (favourite.get(PROVERB_KEY).isSelected()) {
-                favourites += favourite.get(PROVERB_KEY).getText() + "\n";
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (getListView().isItemChecked(i)) {
+                favourites += list.get(i).get(PROVERB_KEY).getText() + "\n";
             }
         }
         shareIntent.putExtra(Intent.EXTRA_TEXT, favourites);
