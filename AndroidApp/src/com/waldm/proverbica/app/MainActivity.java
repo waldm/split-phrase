@@ -94,7 +94,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         addClickListeners();
 
-        getResources().getConfiguration();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             getWindow()
                     .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
