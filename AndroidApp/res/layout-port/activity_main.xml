@@ -27,7 +27,8 @@
         android:background="@drawable/text_background"
         android:textColor="@android:color/black" />
     
-    <Button android:id="@+id/button_slideshow"
+    <com.waldm.proverbica.views.ProverbicaTextButton 
+        android:id="@+id/button_slideshow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@android:drawable/ic_media_play"
@@ -37,7 +38,8 @@
         android:text="@string/play_slideshow"
         android:layout_alignParentBottom="true"/>
     
-    <Button android:id="@+id/button_favourite"
+    <com.waldm.proverbica.views.ProverbicaTextButton 
+        android:id="@+id/button_favourite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@android:drawable/btn_star"
