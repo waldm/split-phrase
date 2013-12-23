@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -128,11 +129,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             public void onClick(View v) {
                 slideShowButton.setAlpha(1f);
                 if (MainActivity.this.slideshowRunning) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                     getActionBar().show();
                     slideShowButton.setImageResource(android.R.drawable.ic_media_play);
                     handler.removeCallbacks(moveToNextImage);
                     stopwatch.reset();
                 } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     getActionBar().hide();
                     slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
                     stopwatch.reset();
