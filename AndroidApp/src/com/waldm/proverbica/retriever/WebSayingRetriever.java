@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.AsyncRetriever.CallbackHandler;
@@ -24,13 +25,13 @@ public class WebSayingRetriever implements SayingRetriever, CallbackHandler {
     }
 
     @Override
-    public void loadSaying(SayingSource sayingSource) {
+    public void loadSaying(SayingSource sayingSource, ImageSize imageSize) {
         if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
                 && sayingSource != SayingSource.FILE) {
             Log.d(TAG, "Loading saying from the internet");
             asyncTask.execute();
         } else {
-            new FileSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource);
+            new FileSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource, imageSize);
         }
     }
 

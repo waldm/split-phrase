@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.settings.SettingsManager;
@@ -20,7 +21,9 @@ import com.waldm.proverbica.settings.SettingsManager;
 public class FileSayingRetriever implements SayingRetriever {
     private static final String TAG = FileSayingRetriever.class.getSimpleName();
 
-    private static final String IMAGES_DIR = "file:///android_asset/backgrounds/";
+    private static final String ASSETS_DIR = "file:///android_asset/";
+    private static final String SMALL_SIZE_DIR = "widget_backgrounds";
+    private static final String NORMAL_SIZE_DIR = "backgrounds";
     private static final String FILENAME = "sayings.txt";
     private List<String> sayings;
     private final Context context;
@@ -34,19 +37,31 @@ public class FileSayingRetriever implements SayingRetriever {
     }
 
     @Override
-    public void loadSaying(SayingSource sayingSource) {
+    public void loadSaying(SayingSource sayingSource, ImageSize imageSize) {
         if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
                 && sayingSource != SayingSource.FILE) {
-            new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource);
+            new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource, imageSize);
         } else {
-            sayingDisplayer.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation()));
+            sayingDisplayer.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation(imageSize)));
         }
     }
 
-    private String loadImageLocation() {
+    private String loadImageLocation(ImageSize imageSize) {
+        String imageDir = null;
+        switch (imageSize) {
+            case NORMAL:
+                imageDir = NORMAL_SIZE_DIR;
+                break;
+            case SMALL:
+                imageDir = SMALL_SIZE_DIR;
+                break;
+            default:
+                break;
+        }
+
         if (backgrounds == null) {
             try {
-                backgrounds = context.getAssets().list("backgrounds");
+                backgrounds = context.getAssets().list(imageDir);
             } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
                 System.exit(1);
@@ -62,7 +77,7 @@ public class FileSayingRetriever implements SayingRetriever {
 
         currentBackground = backgrounds[newImageIndex];
 
-        return IMAGES_DIR + currentBackground;
+        return ASSETS_DIR + imageDir + "/" + currentBackground;
     }
 
     private String loadSayingText(SayingSource sayingSource) {

@@ -17,6 +17,7 @@ import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.app.MainActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
+import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 
@@ -68,12 +69,12 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
 
-        sayingRetriever.loadSaying(SayingSource.FILE);
+        sayingRetriever.loadSaying(SayingSource.FILE, ImageSize.SMALL);
 
         Log.d(TAG, "Widget saying: " + saying.getText());
         Log.d(TAG, "Widget background: " + saying.getImageLocation());
         imageHandler.setTarget(this);
-        imageHandler.loadNextImage(saying.getImageLocation(), 300, 200);
+        imageHandler.loadNextImage(saying.getImageLocation());
     }
 
     @Override
@@ -133,7 +134,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     @Override
     public void setSaying(Saying saying) {
         if (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
-            sayingRetriever.loadSaying(SayingSource.FILE);
+            sayingRetriever.loadSaying(SayingSource.FILE, ImageSize.SMALL);
         } else {
             this.saying = saying;
         }

@@ -35,6 +35,7 @@ import com.waldm.proverbica.favourites.FavouritesActivity;
 import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
+import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
@@ -106,11 +107,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 setSaying(saying);
             } else {
                 // Load first saying
-                sayingRetriever.loadSaying(SayingSource.EITHER);
+                sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         } else {
             // Load first saying
-            sayingRetriever.loadSaying(SayingSource.EITHER);
+            sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
         }
     }
 
@@ -119,7 +120,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void onClick(View v) {
                 text = null;
-                sayingRetriever.loadSaying(SayingSource.EITHER);
+                sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         });
 
@@ -137,7 +138,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
                     stopwatch.reset();
                     stopwatch.start();
-                    sayingRetriever.loadSaying(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
                     handler.postDelayed(moveToNextImage, 0);
                 }
 
@@ -188,7 +189,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    sayingRetriever.loadSaying(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
                     stopwatch.reset();
                     stopwatch.start();
                 }
@@ -346,7 +347,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 if (speed > SHAKE_THRESHOLD) {
                     Log.d(TAG, "Device was shaken");
-                    sayingRetriever.loadSaying(SayingSource.EITHER);
+                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
                 }
                 last_x = x;
                 last_y = y;

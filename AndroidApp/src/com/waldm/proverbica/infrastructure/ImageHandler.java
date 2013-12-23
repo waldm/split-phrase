@@ -31,10 +31,4 @@ public class ImageHandler {
         Preconditions.checkNotNull(target, "Must call setTarget before loading image");
         getImage(imageLocation).into(target);
     }
-
-    public void loadNextImage(String imageLocation, int width, int height) {
-        Preconditions.checkNotNull(target, "Must call setTarget before loading image");
-        Log.d(TAG, "Loading and resizing image to " + width + " x " + height);
-        getImage(imageLocation).resize(width, height).into(target);
-    }
 }
