@@ -22,25 +22,9 @@ import com.google.common.collect.Lists;
 import com.waldm.proverbica.R;
 
 public class FavouritesActivity extends ListActivity {
-    private class ProverbListItem {
-        private String text;
-
-        private ProverbListItem(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        @Override
-        public String toString() {
-            return getText();
-        }
-    }
 
     private static final String PROVERB_KEY = "proverb_key";
-    private List<Map<String, ProverbListItem>> list;
+    private List<Map<String, String>> list;
     private ShareActionProvider shareActionProvider;
     private SimpleAdapter adapter;
 
@@ -56,7 +40,7 @@ public class FavouritesActivity extends ListActivity {
         List<String> favourites = FavouritesIO.readFavourites(this);
         list = Lists.newArrayList();
         for (String favourite : favourites) {
-            list.add(ImmutableMap.of(PROVERB_KEY, new ProverbListItem(favourite)));
+            list.add(ImmutableMap.of(PROVERB_KEY, favourite));
         }
 
         adapter = new SimpleAdapter(this, list, R.layout.list_item_favourites, new String[] { PROVERB_KEY },
@@ -121,15 +105,15 @@ public class FavouritesActivity extends ListActivity {
 
     private void deleteSelectedItems() {
         List<String> toKeep = Lists.newArrayList();
-        List<Map<String, ProverbListItem>> toDelete = Lists.newArrayList();
+        List<Map<String, String>> toDelete = Lists.newArrayList();
         for (int i = 0; i < adapter.getCount(); i++) {
             if (getListView().isItemChecked(i)) {
                 toDelete.add(list.get(i));
             } else {
-                toKeep.add(list.get(i).get(PROVERB_KEY).getText());
+                toKeep.add(list.get(i).get(PROVERB_KEY));
             }
         }
-        for (Map<String, ProverbListItem> favourite : toDelete) {
+        for (Map<String, String> favourite : toDelete) {
             list.remove(favourite);
         }
 
@@ -150,7 +134,7 @@ public class FavouritesActivity extends ListActivity {
         String favourites = "";
         for (int i = 0; i < adapter.getCount(); i++) {
             if (getListView().isItemChecked(i)) {
-                favourites += list.get(i).get(PROVERB_KEY).getText() + "\n";
+                favourites += list.get(i).get(PROVERB_KEY) + "\n";
             }
         }
         shareIntent.putExtra(Intent.EXTRA_TEXT, favourites);
