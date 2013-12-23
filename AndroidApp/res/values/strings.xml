@@ -20,6 +20,7 @@
     <string name="info_facebook_like_key">info_facebook</string>
     <string name="loading_proverb">Loading proverb…</string>
     <string name="no_favourites">No favourites added.\nTo add a proverb to your favourites, tap the bottom right hand corner of the screen.</string>
+    <string name="pause_slideshow">Pause slideshow</string>
     <string name="play_slideshow">Play slideshow</string>
     <string name="pref_always_file">Always load proverbs from file</string>
     <string name="pref_always_file_key">pref_always_file</string>
