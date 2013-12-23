@@ -68,9 +68,7 @@ public class FavouritesActivity extends ListActivity {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                // Here you can do something when items are
-                // selected/de-selected,
-                // such as update the title in the CAB
+                updateShareIntent();
             }
 
             @Override
@@ -118,6 +116,7 @@ public class FavouritesActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        getListView().setItemChecked(position, true);
         updateShareIntent();
     }
 
