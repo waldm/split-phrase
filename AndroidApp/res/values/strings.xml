@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="add_to_favourites">Add to favourites</string>
     <string name="app_name">Proverbica</string>
     <string name="delete">Delete</string>
     <string name="failed_to_load_proverb">Failed to load proverb</string>
@@ -19,6 +20,7 @@
     <string name="info_facebook_like_key">info_facebook</string>
     <string name="loading_proverb">Loading proverb…</string>
     <string name="no_favourites">No favourites added.\nTo add a proverb to your favourites, tap the bottom right hand corner of the screen.</string>
+    <string name="play_slideshow">Play slideshow</string>
     <string name="pref_always_file">Always load proverbs from file</string>
     <string name="pref_always_file_key">pref_always_file</string>
     <string name="pref_keep_screen_on">Keep screen on</string>

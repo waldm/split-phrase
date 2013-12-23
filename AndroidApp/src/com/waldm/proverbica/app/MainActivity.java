@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -65,8 +66,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ShareActionProvider shareActionProvider;
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean slideshowRunning;
-    private ImageView slideShowButton;
-    private ImageView favouritesButton;
+    private Button slideShowButton;
+    private Button favouritesButton;
     private Runnable hideFavouritesButton;
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
@@ -107,8 +108,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
-        slideShowButton = (ImageView) findViewById(R.id.button_slideshow);
-        favouritesButton = (ImageView) findViewById(R.id.button_favourite);
+        slideShowButton = (Button) findViewById(R.id.button_slideshow);
+        favouritesButton = (Button) findViewById(R.id.button_favourite);
 
         addClickListeners();
 
@@ -176,8 +177,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 toggleSayingIsFavourited();
 
                 updateFavouritesMenuItemDrawable();
-                favouritesButton.setImageResource(favourites.contains(saying.getText()) ? android.R.drawable.btn_star_big_on
-                        : android.R.drawable.btn_star);
+                favouritesButton.setCompoundDrawablesWithIntrinsicBounds(
+                        favourites.contains(saying.getText()) ? android.R.drawable.btn_star_big_on
+                                : android.R.drawable.btn_star, 0, 0, 0);
                 favouritesButton.setAlpha(1f);
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
@@ -241,14 +243,18 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         hideSlideshowButton = new Runnable() {
             @Override
             public void run() {
-                slideShowButton.setAlpha(BUTTON_TRANSPARENCY);
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    slideShowButton.setAlpha(BUTTON_TRANSPARENCY);
+                }
             }
         };
 
         hideFavouritesButton = new Runnable() {
             @Override
             public void run() {
-                favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
+                }
             }
         };
     }
@@ -330,8 +336,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.d(TAG, "Image loaded");
         imageView.setImageBitmap(bitmap);
         textView.setText(saying.getText());
-        favouritesButton.setImageResource(android.R.drawable.btn_star);
-        favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
+        favouritesButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.btn_star, 0, 0, 0);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
+        }
     }
 
     @Override
@@ -356,7 +364,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void startSlideshow() {
         slideshowRunning = true;
         getActionBar().hide();
-        slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
+        slideShowButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_pause, 0, 0, 0);
         stopwatch.reset();
         stopwatch.start();
         sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
@@ -366,7 +374,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void stopSlideshow() {
         slideshowRunning = false;
         getActionBar().show();
-        slideShowButton.setImageResource(android.R.drawable.ic_media_play);
+        slideShowButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_play, 0, 0, 0);
         handler.removeCallbacks(moveToNextImage);
         stopwatch.reset();
     }
