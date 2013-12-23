@@ -9,9 +9,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +28,7 @@ import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.app.ShakeDetector.Callback;
 import com.waldm.proverbica.favourites.FavouritesActivity;
 import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
@@ -47,11 +45,10 @@ import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target,
-        SensorEventListener {
+        Callback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final float BUTTON_TRANSPARENCY = 0.3f;
-    private static final float SHAKE_THRESHOLD = 800;
     protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
     private SayingRetriever sayingRetriever;
@@ -60,11 +57,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private TextView textView;
     private ImageView imageView;
     private ShareActionProvider shareActionProvider;
-    private SensorManager sensorMgr;
     private Handler handler = new Handler(Looper.getMainLooper());
-    private float x, y, z;
-    private float last_x, last_y, last_z;
-    private long lastUpdate = -1;
     private boolean slideshowRunning;
     private ImageView slideShowButton;
     private ImageView favouritesButton;
@@ -75,13 +68,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private List<String> favourites;
     private Menu menu;
 
+    private ShakeDetector shakeDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         setTitle(getString(R.string.app_name));
-
         imageHandler = new ImageHandler(this);
         imageHandler.setTarget(this);
 
@@ -173,9 +167,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         handler.removeCallbacks(hideSlideshowButton);
         handler.removeCallbacks(hideFavouritesButton);
-        if (sensorMgr != null) {
-            sensorMgr.unregisterListener(this);
-            sensorMgr = null;
+        if (shakeDetector != null) {
+            shakeDetector.unregister();
         }
     }
 
@@ -205,9 +198,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         if (SettingsManager.getPrefShakeForNextProverb(this)) {
-            sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-            sensorMgr.registerListener(this, sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                    SensorManager.SENSOR_DELAY_NORMAL);
+            shakeDetector = new ShakeDetector(this, (SensorManager) getSystemService(SENSOR_SERVICE));
         }
 
         favourites = FavouritesIO.readFavourites(this);
@@ -326,41 +317,16 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         textView.setText(R.string.failed_to_load_proverb);
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor s, int arg1) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            long curTime = System.currentTimeMillis();
-            // only allow one update every 100ms.
-            if ((curTime - lastUpdate) > 100) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
-
-                x = event.values[0];
-                y = event.values[1];
-                z = event.values[2];
-
-                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-                if (speed > SHAKE_THRESHOLD) {
-                    Log.d(TAG, "Device was shaken");
-                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-                }
-                last_x = x;
-                last_y = y;
-                last_z = z;
-            }
-        }
-    }
-
     private void toggleSayingIsFavourited() {
         if (favourites.contains(text)) {
             favourites.remove(text);
         } else {
             favourites.add(text);
         }
+    }
+
+    @Override
+    public void shakeOccurred() {
+        sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 }
