@@ -30,18 +30,32 @@
         <activity
             android:name="com.waldm.proverbica.settings.SettingsActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/settings" android:screenOrientation="portrait" />
+            android:label="@string/settings" android:screenOrientation="portrait"
+            android:parentActivityName="com.waldm.proverbica.app.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.waldm.proverbica.app.MainActivity" />
+         </activity>
         
         <activity
             android:name="com.waldm.proverbica.info.InfoActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/info" android:screenOrientation="portrait" />
+            android:label="@string/info" android:screenOrientation="portrait"
+            android:parentActivityName="com.waldm.proverbica.app.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.waldm.proverbica.app.MainActivity" />
+         </activity>
         
         <activity
             android:name="com.waldm.proverbica.favourites.FavouritesActivity"
             android:theme="@android:style/Theme.Holo"
-            android:label="@string/favourites" android:screenOrientation="portrait" />
-        
+            android:label="@string/favourites" android:screenOrientation="portrait"
+            android:parentActivityName="com.waldm.proverbica.app.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.waldm.proverbica.app.MainActivity" />
+         </activity>
         
         <receiver android:name="com.waldm.proverbica.widget.WidgetProvider" >
             <intent-filter>
