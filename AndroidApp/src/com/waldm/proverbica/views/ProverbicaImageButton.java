@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class ProverbicaImageButton extends ImageView {
+public class ProverbicaImageButton extends ImageView implements ProverbicaButton {
     public ProverbicaImageButton(Context context) {
         super(context);
     }
@@ -15,5 +15,11 @@ public class ProverbicaImageButton extends ImageView {
 
     public ProverbicaImageButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    @Override
+    public void setBackgroundTextAndAlpha(int backgroundResource, float alpha, int textResource) {
+        setImageResource(backgroundResource);
+        setAlpha(alpha);
     }
 }

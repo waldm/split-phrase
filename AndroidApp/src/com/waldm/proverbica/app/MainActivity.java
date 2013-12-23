@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -45,6 +44,7 @@ import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsManager;
+import com.waldm.proverbica.views.ProverbicaButton;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
@@ -66,8 +66,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ShareActionProvider shareActionProvider;
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean slideshowRunning;
-    private View slideShowButton;
-    private View favouritesButton;
+    private ProverbicaButton slideShowButton;
+    private ProverbicaButton favouritesButton;
     private Runnable hideFavouritesButton;
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
@@ -108,8 +108,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         textView = (TextView) findViewById(R.id.text_box);
         imageView = (ImageView) findViewById(R.id.image);
-        slideShowButton = findViewById(R.id.button_slideshow);
-        favouritesButton = findViewById(R.id.button_favourite);
+        slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
+        favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
 
         addClickListeners();
 
@@ -182,7 +182,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                         : android.R.drawable.btn_star;
                 int text = favourites.contains(saying.getText()) ? R.string.remove_from_favourites
                         : R.string.add_to_favourites;
-                setViewBackgroundTextAndAlpha(favouritesButton, drawable, 1, text);
+                favouritesButton.setBackgroundTextAndAlpha(drawable, 1, text);
 
                 favouritesButton.setAlpha(1f);
                 handler.removeCallbacks(hideFavouritesButton);
@@ -342,7 +342,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         textView.setText(saying.getText());
 
         int drawable = android.R.drawable.btn_star;
-        setViewBackgroundTextAndAlpha(favouritesButton, drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
+        favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
     }
 
     @Override
@@ -367,7 +367,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void startSlideshow() {
         slideshowRunning = true;
         getActionBar().hide();
-        setViewBackgroundTextAndAlpha(slideShowButton, android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
+        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
         stopwatch.reset();
         stopwatch.start();
         sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
@@ -377,18 +377,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void stopSlideshow() {
         slideshowRunning = false;
         getActionBar().show();
-        setViewBackgroundTextAndAlpha(slideShowButton, android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
+        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
         handler.removeCallbacks(moveToNextImage);
         stopwatch.reset();
-    }
-
-    private void setViewBackgroundTextAndAlpha(View view, int backgroundResource, float alpha, int textResource) {
-        if (view instanceof Button) {
-            ((Button) view).setCompoundDrawablesWithIntrinsicBounds(backgroundResource, 0, 0, 0);
-            ((Button) view).setText(textResource);
-        } else if (view instanceof ImageView) {
-            ((ImageView) view).setImageResource(backgroundResource);
-            view.setAlpha(alpha);
-        }
     }
 }
