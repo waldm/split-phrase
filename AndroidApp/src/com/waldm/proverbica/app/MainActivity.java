@@ -51,9 +51,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final float BUTTON_TRANSPARENCY = 0.3f;
     protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
+
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private String text;
     private TextView textView;
     private ImageView imageView;
     private ShareActionProvider shareActionProvider;
@@ -67,8 +67,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
     private List<String> favourites;
     private Menu menu;
-
     private ShakeDetector shakeDetector;
+    private Saying saying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = null;
+                saying = null;
                 sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         });
@@ -148,7 +148,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 toggleSayingIsFavourited();
 
                 updateFavouritesMenuItemDrawable();
-                favouritesButton.setImageResource(favourites.contains(text) ? android.R.drawable.btn_star_big_on
+                favouritesButton.setImageResource(favourites.contains(saying.getText()) ? android.R.drawable.btn_star_big_on
                         : android.R.drawable.btn_star);
                 favouritesButton.setAlpha(1f);
                 handler.removeCallbacks(hideFavouritesButton);
@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void setSaying(Saying saying) {
-        text = saying.getText();
+        this.saying = saying;
         if (shareActionProvider != null) {
             updateShareIntent();
         }
@@ -261,7 +261,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void updateShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text + " - http://proverbica.com");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, saying.getText() + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
     }
@@ -306,7 +306,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
         Log.d(TAG, "Image loaded");
         imageView.setImageBitmap(bitmap);
-        textView.setText(text);
+        textView.setText(saying.getText());
         favouritesButton.setImageResource(android.R.drawable.btn_star);
         favouritesButton.setAlpha(BUTTON_TRANSPARENCY);
     }
@@ -318,10 +318,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     private void toggleSayingIsFavourited() {
-        if (favourites.contains(text)) {
-            favourites.remove(text);
+        if (favourites.contains(saying.getText())) {
+            favourites.remove(saying.getText());
         } else {
-            favourites.add(text);
+            favourites.add(saying.getText());
         }
     }
 
