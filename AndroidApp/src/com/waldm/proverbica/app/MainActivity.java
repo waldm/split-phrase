@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
@@ -54,6 +55,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
 
+    private static final String SLIDESHOW_RUNNING = "SLIDESHOW_RUNNING";
+    private static final String SAYING_TEXT = "SayingText";
+    private static final String SAYING_IMAGE = "SayingImage";
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
     private TextView textView;
@@ -78,6 +82,20 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         setContentView(R.layout.activity_main);
 
         setTitle(getString(R.string.app_name));
+
+        moveToNextImage = new Runnable() {
+            @Override
+            public void run() {
+                if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
+                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                    stopwatch.reset();
+                    stopwatch.start();
+                }
+
+                handler.postDelayed(moveToNextImage, SLIDESHOW_TRANSITION);
+            }
+        };
+
         imageHandler = new ImageHandler(this);
         imageHandler.setTarget(this);
 
@@ -99,29 +117,41 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
-        if (getIntent().getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
-            // Load saying currently being shown in widget
-            Saying saying = SayingIO.readSaying(this);
-            if (saying != null) {
-                setSaying(saying);
+        if (savedInstanceState == null) {
+            if (getIntent().getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
+                // Load saying currently being shown in widget
+                Saying saying = SayingIO.readSaying(this);
+                if (saying != null) {
+                    setSaying(saying);
+                } else {
+                    // Load first saying
+                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                }
             } else {
                 // Load first saying
                 sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         } else {
-            // Load first saying
-            sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+            slideshowRunning = savedInstanceState.getBoolean(SLIDESHOW_RUNNING);
+            saying = new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE));
+            setSaying(saying);
+
+            if (slideshowRunning) {
+                startSlideshow();
+            }
         }
     }
 
     private void addClickListeners() {
-        imageView.setOnClickListener(new View.OnClickListener() {
+        OnClickListener goToNextSaying = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saying = null;
                 sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
-        });
+        };
+        imageView.setOnClickListener(goToNextSaying);
+        textView.setOnClickListener(goToNextSaying);
 
         slideShowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,21 +159,12 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 slideShowButton.setAlpha(1f);
                 if (MainActivity.this.slideshowRunning) {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-                    getActionBar().show();
-                    slideShowButton.setImageResource(android.R.drawable.ic_media_play);
-                    handler.removeCallbacks(moveToNextImage);
-                    stopwatch.reset();
+                    stopSlideshow();
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    getActionBar().hide();
-                    slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
-                    stopwatch.reset();
-                    stopwatch.start();
-                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-                    handler.postDelayed(moveToNextImage, 0);
+                    startSlideshow();
                 }
 
-                slideshowRunning = !slideshowRunning;
                 handler.removeCallbacks(hideSlideshowButton);
                 hideButtons(BUTTON_HIDE_TIME);
             }
@@ -185,19 +206,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         initialiseHideButtonRunnables();
 
-        moveToNextImage = new Runnable() {
-            @Override
-            public void run() {
-                if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-                    stopwatch.reset();
-                    stopwatch.start();
-                }
-
-                handler.postDelayed(moveToNextImage, SLIDESHOW_TRANSITION);
-            }
-        };
-
         hideButtons(BUTTON_HIDE_TIME);
 
         if (SettingsManager.getPrefKeepScreenOn(this)) {
@@ -210,6 +218,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         favourites = FavouritesIO.readFavourites(this);
         updateFavouritesMenuItemDrawable();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(SLIDESHOW_RUNNING, slideshowRunning);
+        outState.putString(SAYING_TEXT, saying.getText());
+        outState.putString(SAYING_IMAGE, saying.getImageLocation());
+        super.onSaveInstanceState(outState);
     }
 
     private void updateFavouritesMenuItemDrawable() {
@@ -335,5 +351,23 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void shakeOccurred() {
         sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+    }
+
+    private void startSlideshow() {
+        slideshowRunning = true;
+        getActionBar().hide();
+        slideShowButton.setImageResource(android.R.drawable.ic_media_pause);
+        stopwatch.reset();
+        stopwatch.start();
+        sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+        handler.postDelayed(moveToNextImage, 0);
+    }
+
+    private void stopSlideshow() {
+        slideshowRunning = false;
+        getActionBar().show();
+        slideShowButton.setImageResource(android.R.drawable.ic_media_play);
+        handler.removeCallbacks(moveToNextImage);
+        stopwatch.reset();
     }
 }
