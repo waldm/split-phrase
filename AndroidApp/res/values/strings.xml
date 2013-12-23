@@ -27,6 +27,7 @@
     <string name="pref_keep_screen_on_key">pref_keep_screen_on</string>
     <string name="pref_shake_for_next_proverb">Shake for next proverb</string>
     <string name="pref_shake_for_next_proverb_key">pref_shake_for_next_proverb</string>
+    <string name="remove_from_favourites">Remove from favourites</string>
     <string name="settings">Settings</string>
     <string name="share">Share</string>
     <string name="widget_instructions">• Tap widget text to see next proverb.\n• Tap widget image to launch main app</string>

@@ -180,6 +180,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 favouritesButton.setCompoundDrawablesWithIntrinsicBounds(
                         favourites.contains(saying.getText()) ? android.R.drawable.btn_star_big_on
                                 : android.R.drawable.btn_star, 0, 0, 0);
+                if (favouritesButton.getText().length() != 0) {
+                    favouritesButton.setText(favourites.contains(saying.getText()) ? R.string.remove_from_favourites
+                            : R.string.add_to_favourites);
+                }
                 favouritesButton.setAlpha(1f);
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
