@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.SimpleAdapter;
@@ -135,11 +134,6 @@ public class FavouritesActivity extends ListActivity {
         }
 
         adapter.notifyDataSetChanged();
-        for (int i = 0; i < list.size(); i++) {
-            View v = adapter.getView(i, null, null);
-            CheckedTextView checkedView = (CheckedTextView) v;
-            // checkedView.setChecked(false);
-        }
 
         getListView().invalidateViews();
 
