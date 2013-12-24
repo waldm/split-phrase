@@ -63,6 +63,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
             Intent imageIntent = new Intent(this.getApplicationContext(), MainActivity.class);
             imageIntent.putExtra(EXTRA_STARTED_VIA_WIDGET, true);
+            imageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent imagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, imageIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.image, imagePendingIntent);
 
