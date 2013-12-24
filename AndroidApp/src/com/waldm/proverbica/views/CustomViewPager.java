@@ -1,6 +1,7 @@
 package com.waldm.proverbica.views;
 
 import android.content.Context;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -66,5 +67,11 @@ public class CustomViewPager extends ViewPager {
 
     public void moveToEnd() {
         setCurrentItem(getAdapter().getCount());
+    }
+
+    @Override
+    public void setAdapter(PagerAdapter adapter) {
+        super.setAdapter(adapter);
+        maxPosition = -1;
     }
 }

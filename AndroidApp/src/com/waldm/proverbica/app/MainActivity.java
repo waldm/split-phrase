@@ -138,6 +138,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             // Load saying currently being shown in widget
             Saying saying = SayingIO.readSaying(this);
             if (saying != null) {
+                viewPageAdapter = new ViewPageAdapter(this);
+                viewPager.setAdapter(viewPageAdapter);
                 setSaying(saying);
                 return true;
             }
