@@ -63,4 +63,7 @@ public class CustomViewPager extends ViewPager {
         this.sayingDisplayer = sayingDisplayer;
     }
 
+    public void moveToEnd() {
+        setCurrentItem(getAdapter().getCount());
+    }
 }

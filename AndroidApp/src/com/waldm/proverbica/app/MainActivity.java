@@ -84,7 +84,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                    viewPager.moveToEnd();
                     stopwatch.reset();
                     stopwatch.start();
                 }

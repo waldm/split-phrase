@@ -18,8 +18,8 @@ import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 
 public class ViewPageAdapter extends PagerAdapter {
-    private List<Bitmap> images = Lists.newArrayList();
     private final Context context;
+    private List<Bitmap> images = Lists.newArrayList();
     private List<Saying> sayings = Lists.newArrayList();
     private int position;
 
