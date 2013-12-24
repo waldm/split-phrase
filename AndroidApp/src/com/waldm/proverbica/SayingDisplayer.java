@@ -6,4 +6,6 @@ public interface SayingDisplayer {
 
     void updateFavouritesButton(float alpha);
 
+    void updateShareIntent();
+
 }

@@ -288,7 +288,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         return true;
     }
 
-    private void updateShareIntent() {
+    @Override
+    public void updateShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, viewPageAdapter.getCurrentSayingText() + " - http://proverbica.com");
