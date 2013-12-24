@@ -9,13 +9,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.util.Log;
 
 import com.google.common.collect.Lists;
 
 public class FavouritesIO {
-    private static final String FAVOURITES_FILENAME = "favourites";
+    public static final String FAVOURITES_FILENAME = "favourites";
     private static final String TAG = FavouritesIO.class.getSimpleName();
 
     public static void writeFavourites(List<String> favourites, Context context) {
@@ -27,6 +28,9 @@ public class FavouritesIO {
                 writer.write(favourite + "\n");
             }
             writer.close();
+            Log.d(TAG, "Backing up favourites to the cloud");
+            BackupManager backupManager = new BackupManager(context);
+            backupManager.dataChanged();
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Failed to write favourites, file not found");
         } catch (IOException e) {
