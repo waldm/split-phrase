@@ -36,7 +36,7 @@ public class CustomViewPager extends ViewPager {
         }
 
         ((ViewPageAdapter) getAdapter()).setPosition(position);
-        sayingDisplayer.updateFavouritesButton();
+        sayingDisplayer.updateFavouritesButton(MainActivity.BUTTON_TRANSPARENCY);
     }
 
     @Override

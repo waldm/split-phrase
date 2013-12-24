@@ -171,7 +171,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void updateFavouritesButton() {
+    public void updateFavouritesButton(float alpha) {
         // Widget has no favourites button
     }
 }

@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Callback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final float BUTTON_TRANSPARENCY = 0.3f;
+    public static final float BUTTON_TRANSPARENCY = 0.3f;
     protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
 
@@ -175,7 +175,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
                 updateFavouritesMenuItemDrawable();
 
-                updateFavouritesButton();
+                updateFavouritesButton(1);
 
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
@@ -373,11 +373,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     @Override
-    public void updateFavouritesButton() {
+    public void updateFavouritesButton(float alpha) {
         int drawable = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? android.R.drawable.btn_star_big_on
                 : android.R.drawable.btn_star;
         int text = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? R.string.remove_from_favourites
                 : R.string.add_to_favourites;
-        favouritesButton.setBackgroundTextAndAlpha(drawable, 1, text);
+        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
     }
 }
