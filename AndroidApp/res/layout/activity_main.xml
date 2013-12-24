@@ -5,7 +5,7 @@
     tools:context=".MainActivity"
     android:animateLayoutChanges="true" >
     
-    <com.waldm.proverbica.app.CustomViewPager    
+    <com.waldm.proverbica.views.CustomViewPager    
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

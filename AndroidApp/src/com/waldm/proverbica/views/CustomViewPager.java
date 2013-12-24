@@ -1,4 +1,4 @@
-package com.waldm.proverbica.app;
+package com.waldm.proverbica.views;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.app.MainActivity;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.SayingRetriever;

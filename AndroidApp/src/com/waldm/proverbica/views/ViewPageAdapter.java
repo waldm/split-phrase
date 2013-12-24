@@ -1,4 +1,4 @@
-package com.waldm.proverbica.app;
+package com.waldm.proverbica.views;
 
 import java.util.List;
 

@@ -41,7 +41,9 @@ import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsManager;
+import com.waldm.proverbica.views.CustomViewPager;
 import com.waldm.proverbica.views.ProverbicaButton;
+import com.waldm.proverbica.views.ViewPageAdapter;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
