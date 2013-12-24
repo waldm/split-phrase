@@ -57,7 +57,9 @@ public class ShakeDetector implements SensorEventListener {
     }
 
     public void unregister() {
-        sensorMgr.unregisterListener(this);
+        if (sensorMgr != null) {
+            sensorMgr.unregisterListener(this);
+        }
         sensorMgr = null;
     }
 }
