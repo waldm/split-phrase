@@ -5,28 +5,12 @@
     tools:context=".MainActivity"
     android:animateLayoutChanges="true" >
     
-    <ImageView android:id="@+id/image"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="true"
-        android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"/>
-
-    <TextView
-        android:id="@+id/text_box"
+    <com.waldm.proverbica.app.CustomViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:gravity="center"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:padding="4dp"
-        android:layout_below="@id/image"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/text_background"
-        android:textColor="@android:color/black" />
-    
+        android:layout_alignParentTop="true"/>
+
     <com.waldm.proverbica.views.ProverbicaTextButton 
         android:id="@+id/button_slideshow"
         android:layout_width="wrap_content"

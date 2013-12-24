@@ -4,4 +4,6 @@ public interface SayingDisplayer {
 
     void setSaying(Saying saying);
 
+    void updateFavouritesButton();
+
 }

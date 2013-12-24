@@ -169,4 +169,9 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
+
+    @Override
+    public void updateFavouritesButton() {
+        // Widget has no favourites button
+    }
 }
