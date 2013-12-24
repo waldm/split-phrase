@@ -119,17 +119,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         if (savedInstanceState == null) {
-            if (getIntent().getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
-                // Load saying currently being shown in widget
-                Saying saying = SayingIO.readSaying(this);
-                if (saying != null) {
-                    setSaying(saying);
-                } else {
-                    // Load first saying
-                    sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-                }
-            } else {
-                // Load first saying
+            if (!tryLoadSayingFromWidget(getIntent())) {
                 sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         } else {
@@ -141,6 +131,25 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 startSlideshow();
             }
         }
+    }
+
+    private boolean tryLoadSayingFromWidget(Intent intent) {
+        if (intent.getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
+            // Load saying currently being shown in widget
+            Saying saying = SayingIO.readSaying(this);
+            if (saying != null) {
+                setSaying(saying);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        tryLoadSayingFromWidget(intent);
     }
 
     private void addClickListeners() {
