@@ -1,18 +1,19 @@
 package com.waldm.proverbica.widget;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.waldm.proverbica.Saying;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import android.content.Context;
-
-import com.waldm.proverbica.Saying;
-
 public class SayingIO {
+    private static final String TAG = SayingIO.class.getSimpleName();
     private static final String SAYING_SOURCE_WIDGET = "Widget";
     private static final String CURRENT_SAYING_FILENAME = "currentSaying";
 
@@ -24,7 +25,9 @@ public class SayingIO {
             writer.write(saying.getText() + "\n");
             writer.write(saying.getImageLocation() + "\n");
             writer.close();
-        } catch (FileNotFoundException e) {} catch (IOException e) {}
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to write saying. " + e.toString());
+        }
     }
 
     public static Saying readSaying(Context context) {
@@ -40,7 +43,9 @@ public class SayingIO {
             }
             reader.close();
             stream.close();
-        } catch (FileNotFoundException e) {} catch (IOException e) {}
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to read saying. " + e.toString());
+        }
 
         return saying;
     }

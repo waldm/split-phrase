@@ -1,21 +1,20 @@
 package com.waldm.proverbica.retriever;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.waldm.proverbica.Saying;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
-import com.waldm.proverbica.Saying;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class AsyncRetriever extends AsyncTask<Void, Void, Saying> {
     public static interface CallbackHandler {
@@ -57,26 +56,24 @@ public class AsyncRetriever extends AsyncTask<Void, Void, Saying> {
         HttpClient httpClient = new DefaultHttpClient();
         HttpContext localContext = new BasicHttpContext();
         HttpGet httpGet = new HttpGet(url);
-        HttpResponse response = null;
+        HttpResponse response;
         try {
             response = httpClient.execute(httpGet, localContext);
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         String result = "";
 
-        BufferedReader reader = null;
+        BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 result += line;

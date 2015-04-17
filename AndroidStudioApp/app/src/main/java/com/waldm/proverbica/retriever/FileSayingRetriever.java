@@ -84,13 +84,14 @@ public class FileSayingRetriever implements SayingRetriever {
         Log.d(TAG, "Loading saying from file");
         if (sayings == null) {
             Log.d(TAG, "Loading all sayings from file");
-            sayings = new ArrayList<String>();
+            sayings = new ArrayList<>();
 
-            InputStream stream = null;
+            InputStream stream;
             try {
                 stream = context.getAssets().open(FILENAME);
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));

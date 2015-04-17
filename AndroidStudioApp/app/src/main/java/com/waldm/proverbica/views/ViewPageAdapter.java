@@ -1,11 +1,8 @@
 package com.waldm.proverbica.views;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +13,8 @@ import android.widget.TextView;
 import com.google.common.collect.Lists;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
+
+import java.util.List;
 
 public class ViewPageAdapter extends PagerAdapter {
     private final Context context;
@@ -44,7 +43,7 @@ public class ViewPageAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((RelativeLayout) object);
+        return view == object;
     }
 
     @Override
@@ -57,13 +56,13 @@ public class ViewPageAdapter extends PagerAdapter {
         TextView textView = (TextView) v.findViewById(R.id.text_box);
         textView.setText(sayings.get(position).getText());
 
-        ((ViewPager) container).addView(v, 0);
+        container.addView(v, 0);
         return v;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ((ViewPager) container).removeView((RelativeLayout) object);
+        container.removeView((RelativeLayout) object);
     }
 
     public void setPosition(int position) {

@@ -6,10 +6,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.util.Log;
 
 import com.waldm.proverbica.R;
 
 public class InfoFragment extends PreferenceFragment {
+    private static final String TAG = InfoFragment.class.getSimpleName();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +24,7 @@ public class InfoFragment extends PreferenceFragment {
         try {
             version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
+            Log.e(TAG, "Unable to find version name");
         }
         findPreference(getString(R.string.info_version_key)).setSummary(version);
 
