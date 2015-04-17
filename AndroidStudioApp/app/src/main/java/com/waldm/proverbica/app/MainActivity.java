@@ -3,6 +3,7 @@ package com.waldm.proverbica.app;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -223,7 +225,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBoolean(SLIDESHOW_RUNNING, slideshowRunning);
         outState.putString(SAYING_TEXT, viewPageAdapter.getCurrentSayingText());
         outState.putString(SAYING_IMAGE, viewPageAdapter.getCurrentSayingImageLocation());
@@ -365,7 +367,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     private void startSlideshow() {
         slideshowRunning = true;
-        getActionBar().hide();
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.hide();
+        }
+
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
         stopwatch.reset();
         stopwatch.start();
@@ -375,7 +381,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     private void stopSlideshow() {
         slideshowRunning = false;
-        getActionBar().show();
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.show();
+        }
+
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
         handler.removeCallbacks(moveToNextImage);
         stopwatch.reset();
