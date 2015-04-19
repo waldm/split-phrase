@@ -1,8 +1,5 @@
 package com.waldm.proverbica.app;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,7 +8,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,8 +24,6 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.google.common.base.Stopwatch;
-import com.squareup.picasso.Picasso.LoadedFrom;
-import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
@@ -38,20 +32,19 @@ import com.waldm.proverbica.controllers.SayingController;
 import com.waldm.proverbica.favourites.FavouritesActivity;
 import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
-import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.ImageSize;
-import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.retriever.WebSayingRetriever;
 import com.waldm.proverbica.settings.SettingsActivity;
 import com.waldm.proverbica.settings.SettingsManager;
-import com.waldm.proverbica.views.CustomViewPager;
 import com.waldm.proverbica.views.ProverbicaButton;
-import com.waldm.proverbica.views.ViewPageAdapter;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
         Callback {
