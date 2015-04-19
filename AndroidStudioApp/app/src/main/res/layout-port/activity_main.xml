@@ -1,36 +1,76 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:animateLayoutChanges="true" >
-    
-    <com.waldm.proverbica.views.CustomViewPager
-        android:id="@+id/view_pager"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:text="&lt;"
+            android:id="@+id/previous_button"/>
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent" >
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/text_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:padding="4dp"
+                android:layout_below="@id/image"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/text_background"
+                android:textColor="@android:color/black" />
+        </RelativeLayout>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:text="&gt;"
+            android:id="@+id/next_button"/>
+    </LinearLayout>
 
     <com.waldm.proverbica.views.ProverbicaTextButton 
         android:id="@+id/button_slideshow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:drawableLeft="@android:drawable/ic_media_play"
         android:padding="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/play_slideshow"
-        android:layout_alignParentBottom="true"/>
+        android:text="@string/play_slideshow"/>
     
     <com.waldm.proverbica.views.ProverbicaTextButton 
         android:id="@+id/button_favourite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:drawableLeft="@android:drawable/btn_star"
         android:padding="10dp"
         android:layout_marginBottom="15dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/add_to_favourites"
-        android:layout_above="@id/button_slideshow"/>
+        android:text="@string/add_to_favourites"/>
 
-</RelativeLayout>
+</LinearLayout>

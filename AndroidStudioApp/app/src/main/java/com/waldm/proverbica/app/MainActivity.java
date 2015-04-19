@@ -22,6 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 
 import com.google.common.base.Stopwatch;
@@ -60,9 +62,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String SLIDESHOW_RUNNING = "SLIDESHOW_RUNNING";
     private static final String SAYING_TEXT = "SayingText";
     private static final String SAYING_IMAGE = "SayingImage";
+    private static final String WALDM = "WALDM";
     private SayingRetriever sayingRetriever;
     private ImageHandler imageHandler;
-    private CustomViewPager viewPager;
+    private ImageView imageView;
+    //private CustomViewPager viewPager;
     private ShareActionProvider shareActionProvider;
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean slideshowRunning;
@@ -75,10 +79,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private List<String> favourites;
     private Menu menu;
     private ShakeDetector shakeDetector;
-    private ViewPageAdapter viewPageAdapter;
+    private Button previousButton;
+    private Button nextButton;
+    //private ViewPageAdapter viewPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(WALDM, "onCreate: " +  savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -88,7 +95,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    viewPager.moveToEnd();
+                    //viewPager.moveToEnd();
                     stopwatch.reset();
                     stopwatch.start();
                 }
@@ -106,13 +113,16 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             sayingRetriever = new WebSayingRetriever(this, this);
         }
 
-        viewPager = (CustomViewPager) findViewById(R.id.view_pager);
-        viewPager.setFields(sayingRetriever, this);
-        viewPageAdapter = new ViewPageAdapter(this);
-        viewPager.setAdapter(viewPageAdapter);
+        //viewPager = (CustomViewPager) findViewById(R.id.view_pager);
+        //viewPager.setFields(sayingRetriever, this);
+        //viewPageAdapter = new ViewPageAdapter(this);
+        //viewPager.setAdapter(viewPageAdapter);
+        imageView = (ImageView) findViewById(R.id.image);
 
         slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
         favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
+        previousButton = (Button) findViewById(R.id.previous_button);
+        nextButton = (Button) findViewById(R.id.next_button);
 
         addClickListeners();
 
@@ -136,12 +146,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     private boolean tryLoadSayingFromWidget(Intent intent) {
+        Log.e(WALDM, "tryLoadSayingFromWidget");
         if (intent.getBooleanExtra(UpdateWidgetService.EXTRA_STARTED_VIA_WIDGET, false)) {
             // Load saying currently being shown in widget
             Saying saying = SayingIO.readSaying(this);
             if (saying != null) {
-                viewPageAdapter = new ViewPageAdapter(this);
-                viewPager.setAdapter(viewPageAdapter);
+                //viewPageAdapter = new ViewPageAdapter(this);
+                //viewPager.setAdapter(viewPageAdapter);
                 setSaying(saying);
                 return true;
             }
@@ -152,11 +163,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.e(WALDM,"oneNewIntent");
         super.onNewIntent(intent);
         tryLoadSayingFromWidget(intent);
     }
 
     private void addClickListeners() {
+        Log.e(WALDM, "addClickListeners");
         slideShowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,10 +201,24 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 FavouritesIO.writeFavourites(favourites, MainActivity.this);
             }
         });
+
+        previousButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+            }
+        });
     }
 
     @Override
     protected void onPause() {
+        Log.e(WALDM, "onPause");
         super.onPause();
         if (stopwatch.isRunning()) {
             stopwatch.stop();
@@ -206,6 +233,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     protected void onResume() {
+        Log.e(WALDM, "onResume");
         super.onResume();
 
         initialiseHideButtonRunnables();
@@ -226,13 +254,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.e(WALDM, "onSaveInstanceState");
         outState.putBoolean(SLIDESHOW_RUNNING, slideshowRunning);
-        outState.putString(SAYING_TEXT, viewPageAdapter.getCurrentSayingText());
-        outState.putString(SAYING_IMAGE, viewPageAdapter.getCurrentSayingImageLocation());
+        //outState.putString(SAYING_TEXT, viewPageAdapter.getCurrentSayingText());
+        //outState.putString(SAYING_IMAGE, viewPageAdapter.getCurrentSayingImageLocation());
         super.onSaveInstanceState(outState);
     }
 
     private void updateFavouritesMenuItemDrawable() {
+        Log.e(WALDM, "updateFavouritesMenuItemDrawable");
         if (menu == null) {
             return;
         }
@@ -242,6 +272,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     private void initialiseHideButtonRunnables() {
+        Log.e(WALDM, "initialiseHideButtonRunnables");
         hideSlideshowButton = new Runnable() {
             @Override
             public void run() {
@@ -262,13 +293,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     private void hideButtons(int hideTime) {
+        Log.e(WALDM, "hideButtons");
         handler.postDelayed(hideSlideshowButton, hideTime);
         handler.postDelayed(hideFavouritesButton, hideTime);
     }
 
     @Override
     public void setSaying(Saying saying) {
-        viewPageAdapter.addSaying(saying);
+        Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
+        //viewPageAdapter.addSaying(saying);
 
         if (shareActionProvider != null) {
             updateShareIntent();
@@ -279,6 +312,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e(WALDM, "onCreateOptionsMenu");
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
         if (favourites != null) {
@@ -292,19 +326,21 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void updateShareIntent() {
+        Log.e(WALDM, "updateShareIntent");
         if (shareActionProvider == null) {
             return;
         }
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, viewPageAdapter.getCurrentSayingText() + " - http://proverbica.com");
+        //shareIntent.putExtra(Intent.EXTRA_TEXT, viewPageAdapter.getCurrentSayingText() + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e(WALDM, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.menu_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -322,6 +358,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.e(WALDM, "onSharedPreferenceChanged");
         if (key.equals(getString(R.string.pref_always_file_key))) {
             if (SettingsManager.getPrefAlwaysUseFile(this)) {
                 sayingRetriever = new FileSayingRetriever(this, this);
@@ -333,6 +370,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onPrepareLoad(Drawable arg0) {
+        Log.e(WALDM, "onPrepareLoad");
         if (NetworkConnectivity.isNetworkAvailable(this) && !SettingsManager.getPrefAlwaysUseFile(this)) {
             Log.d(TAG, "Loading image");
         }
@@ -340,8 +378,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
+        Log.e(WALDM, "onBitmapLoaded");
         Log.d(TAG, "Image loaded");
-        viewPageAdapter.addBitmap(bitmap);
+        imageView.setImageBitmap(bitmap);
+        //viewPageAdapter.addBitmap(bitmap);
 
         int drawable = android.R.drawable.btn_star;
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
@@ -349,23 +389,27 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void onBitmapFailed(Drawable arg0) {
+        Log.e(WALDM, "onBitmapFailed");
         Log.d(TAG, "Image failed to load");
     }
 
     private void toggleSayingIsFavourited() {
-        if (favourites.contains(viewPageAdapter.getCurrentSayingText())) {
-            favourites.remove(viewPageAdapter.getCurrentSayingText());
-        } else {
-            favourites.add(viewPageAdapter.getCurrentSayingText());
-        }
+        Log.e(WALDM, "toggleSayingIsFavourited");
+        //if (favourites.contains(viewPageAdapter.getCurrentSayingText())) {
+        //    favourites.remove(viewPageAdapter.getCurrentSayingText());
+        //} else {
+//            favourites.add(viewPageAdapter.getCurrentSayingText());
+//        }
     }
 
     @Override
     public void shakeOccurred() {
+        Log.e(WALDM, "shakeOccurred");
         sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 
     private void startSlideshow() {
+        Log.e(WALDM, "startSlideshow");
         slideshowRunning = true;
         ActionBar actionBar = getActionBar();
         if (actionBar != null){
@@ -380,6 +424,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     private void stopSlideshow() {
+        Log.e(WALDM, "stopSlideshow");
         slideshowRunning = false;
         ActionBar actionBar = getActionBar();
         if (actionBar != null){
@@ -393,10 +438,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     public void updateFavouritesButton(float alpha) {
-        int drawable = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? android.R.drawable.btn_star_big_on
-                : android.R.drawable.btn_star;
-        int text = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? R.string.remove_from_favourites
-                : R.string.add_to_favourites;
-        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+        Log.e(WALDM, "updateFavouritesButton");
+        //int drawable = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? android.R.drawable.btn_star_big_on
+//                : android.R.drawable.btn_star;
+///        int text = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? R.string.remove_from_favourites
+//                : R.string.add_to_favourites;
+//        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
     }
 }
