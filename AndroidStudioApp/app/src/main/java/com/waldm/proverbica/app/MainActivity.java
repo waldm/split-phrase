@@ -65,7 +65,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String SAYING_TEXT = "SayingText";
     private static final String SAYING_IMAGE = "SayingImage";
     private static final String WALDM = "WALDM";
-    private SayingRetriever sayingRetriever;
     private ImageView imageView;
     //private CustomViewPager viewPager;
     private ShareActionProvider shareActionProvider;
@@ -107,13 +106,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         };
 
+        SayingRetriever sayingRetriever;
         if (SettingsManager.getPrefAlwaysUseFile(this)) {
             sayingRetriever = new FileSayingRetriever(this, this);
         } else {
             sayingRetriever = new WebSayingRetriever(this, this);
         }
 
-        sayingController = new SayingController(this, this);
+        sayingController = new SayingController(this, this, sayingRetriever);
 
         //viewPager = (CustomViewPager) findViewById(R.id.view_pager);
         //viewPager.setFields(sayingRetriever, this);
@@ -213,7 +213,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         });
     }
@@ -334,7 +334,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        //shareIntent.putExtra(Intent.EXTRA_TEXT, viewPageAdapter.getCurrentSayingText() + " - http://proverbica.com");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sayingController.getCurrentSaying().getText() + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
     }
@@ -372,9 +372,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.e(WALDM, "onSharedPreferenceChanged");
         if (key.equals(getString(R.string.pref_always_file_key))) {
             if (SettingsManager.getPrefAlwaysUseFile(this)) {
-                sayingRetriever = new FileSayingRetriever(this, this);
+                sayingController.setSayingRetriever(new FileSayingRetriever(this, this));
             } else {
-                sayingRetriever = new WebSayingRetriever(this, this);
+                sayingController.setSayingRetriever(new WebSayingRetriever(this, this));
             }
         }
     }
@@ -392,7 +392,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void shakeOccurred() {
         Log.e(WALDM, "shakeOccurred");
-        sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+        sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 
     private void startSlideshow() {
@@ -406,7 +406,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
         stopwatch.reset();
         stopwatch.start();
-        sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+        sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
         handler.postDelayed(moveToNextImage, 0);
     }
 
@@ -426,10 +426,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
-        //int drawable = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? android.R.drawable.btn_star_big_on
-//                : android.R.drawable.btn_star;
-///        int text = favourites.contains(viewPageAdapter.getCurrentSayingText()) ? R.string.remove_from_favourites
-//                : R.string.add_to_favourites;
-//        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+        String currentSayingText = sayingController.getCurrentSaying().getText();
+        int drawable = favourites.contains(currentSayingText) ? android.R.drawable.btn_star_big_on
+                : android.R.drawable.btn_star;
+        int text = favourites.contains(currentSayingText) ? R.string.remove_from_favourites
+                : R.string.add_to_favourites;
+        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
     }
 }
