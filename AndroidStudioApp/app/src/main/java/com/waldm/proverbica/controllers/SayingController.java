@@ -25,7 +25,8 @@ public class SayingController implements Target {
     private static final String TAG = SayingController.class.getSimpleName();
     private final Context context;
     private final List<Pair<Saying, Bitmap>> sayings = Lists.newArrayList();
-    private Saying currentSaying;
+    private Saying tempSaying;
+    private int currentSayingIndex = -1;
     private final ImageHandler imageHandler;
     private final SayingDisplayer sayingDisplayer;
     private SayingRetriever sayingRetriever;
@@ -39,7 +40,7 @@ public class SayingController implements Target {
     }
 
     public void setSaying(Saying saying) {
-        this.currentSaying = saying;
+        this.tempSaying = saying;
         imageHandler.loadNextImage(saying.getImageLocation());
     }
 
@@ -55,20 +56,28 @@ public class SayingController implements Target {
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
         Log.e(TAG, "onBitmapLoaded");
         Log.d(TAG, "Image loaded");
-        sayingDisplayer.displaySaying(currentSaying, bitmap);
-        sayings.add(new Pair<>(currentSaying, bitmap));
+        sayingDisplayer.displaySaying(tempSaying, bitmap);
+        sayings.add(new Pair<>(tempSaying, bitmap));
+        currentSayingIndex++;
+        tempSaying = null;
     }
 
     @Override
     public void onBitmapFailed(Drawable arg0) {
         Log.e(TAG, "onBitmapFailed");
         Log.d(TAG, "Image failed to load");
-        sayingDisplayer.displaySaying(currentSaying, null);
-        sayings.add(new Pair<Saying, Bitmap>(currentSaying, null));
+        sayingDisplayer.displaySaying(tempSaying, null);
+        sayings.add(new Pair<Saying, Bitmap>(tempSaying, null));
+        currentSayingIndex++;
+        tempSaying = null;
     }
 
     public Saying getCurrentSaying() {
-        return currentSaying;
+        if (currentSayingIndex >= sayings.size() || currentSayingIndex < 0){
+            return null;
+        }else {
+            return sayings.get(currentSayingIndex).first;
+        }
     }
 
     public void loadSaying(SayingSource source, ImageSize imageSize) {
@@ -77,5 +86,25 @@ public class SayingController implements Target {
 
     public void setSayingRetriever(SayingRetriever sayingRetriever) {
         this.sayingRetriever = sayingRetriever;
+    }
+
+    public void displayNextSaying() {
+        if (currentSayingIndex == sayings.size() - 1){
+            sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+        }else{
+            currentSayingIndex++;
+            Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
+            sayingDisplayer.displaySaying(saying.first, saying.second);
+        }
+    }
+
+    public void displayPreviousSaying() {
+        if (currentSayingIndex == 0){
+            throw new UnsupportedOperationException("No previous saying to go to");
+        } else {
+            currentSayingIndex--;
+            Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
+            sayingDisplayer.displaySaying(saying.first, saying.second);
+        }
     }
 }

@@ -129,7 +129,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         if (savedInstanceState == null) {
             if (!tryLoadSayingFromWidget(getIntent())) {
-                sayingRetriever.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         } else {
             slideshowRunning = savedInstanceState.getBoolean(SLIDESHOW_RUNNING);
@@ -199,13 +199,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         previousButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                sayingController.displayPreviousSaying();
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+                sayingController.displayNextSaying();
             }
         });
     }
@@ -323,11 +324,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             return;
         }
 
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, sayingController.getCurrentSaying().getText() + " - http://proverbica.com");
-        shareIntent.setType("text/plain");
-        shareActionProvider.setShareIntent(shareIntent);
+        Saying currentSaying = sayingController.getCurrentSaying();
+        if (currentSaying != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, currentSaying.getText() + " - http://proverbica.com");
+            shareIntent.setType("text/plain");
+            shareActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     @Override
