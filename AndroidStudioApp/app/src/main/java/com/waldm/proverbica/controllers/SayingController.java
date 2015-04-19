@@ -15,7 +15,6 @@ import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
-import com.waldm.proverbica.retriever.FileSayingRetriever;
 import com.waldm.proverbica.retriever.SayingRetriever;
 import com.waldm.proverbica.settings.SettingsManager;
 
@@ -41,7 +40,7 @@ public class SayingController implements Target {
 
     public void setSaying(Saying saying) {
         this.tempSaying = saying;
-        imageHandler.loadNextImage(saying.getImageLocation());
+        imageHandler.loadImage(saying.getImageLocation());
     }
 
     @Override

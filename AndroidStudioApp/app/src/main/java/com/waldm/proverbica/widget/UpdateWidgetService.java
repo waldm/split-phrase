@@ -74,7 +74,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         Log.d(TAG, "Widget saying: " + saying.getText());
         Log.d(TAG, "Widget background: " + saying.getImageLocation());
         imageHandler.setTarget(this);
-        imageHandler.loadNextImage(saying.getImageLocation());
+        imageHandler.loadImage(saying.getImageLocation());
     }
 
     @Override
