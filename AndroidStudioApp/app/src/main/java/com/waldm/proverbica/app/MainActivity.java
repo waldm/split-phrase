@@ -66,7 +66,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String SAYING_IMAGE = "SayingImage";
     private static final String WALDM = "WALDM";
     private ImageView imageView;
-    //private CustomViewPager viewPager;
     private ShareActionProvider shareActionProvider;
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean slideshowRunning;
@@ -83,7 +82,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Button nextButton;
     private TextView textView;
     private SayingController sayingController;
-    //private ViewPageAdapter viewPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +113,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         sayingController = new SayingController(this, this, sayingRetriever);
 
-        //viewPager = (CustomViewPager) findViewById(R.id.view_pager);
-        //viewPager.setFields(sayingRetriever, this);
-        //viewPageAdapter = new ViewPageAdapter(this);
-        //viewPager.setAdapter(viewPageAdapter);
         imageView = (ImageView) findViewById(R.id.image);
         textView = (TextView) findViewById(R.id.text_box);
         slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
@@ -153,8 +147,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             // Load saying currently being shown in widget
             Saying saying = SayingIO.readSaying(this);
             if (saying != null) {
-                //viewPageAdapter = new ViewPageAdapter(this);
-                //viewPager.setAdapter(viewPageAdapter);
                 setSaying(saying);
                 return true;
             }
@@ -258,8 +250,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.e(WALDM, "onSaveInstanceState");
         outState.putBoolean(SLIDESHOW_RUNNING, slideshowRunning);
-        //outState.putString(SAYING_TEXT, viewPageAdapter.getCurrentSayingText());
-        //outState.putString(SAYING_IMAGE, viewPageAdapter.getCurrentSayingImageLocation());
+        outState.putString(SAYING_TEXT, sayingController.getCurrentSaying().getText());
+        outState.putString(SAYING_IMAGE, sayingController.getCurrentSaying().getImageLocation());
         super.onSaveInstanceState(outState);
     }
 
@@ -304,7 +296,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void setSaying(Saying saying) {
         Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
         sayingController.setSaying(saying);
-        //viewPageAdapter.addSaying(saying);
 
         if (shareActionProvider != null) {
             updateShareIntent();
