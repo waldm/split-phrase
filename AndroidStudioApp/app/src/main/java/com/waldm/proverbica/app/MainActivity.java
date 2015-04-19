@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
+import android.widget.TextView;
 
 import com.google.common.base.Stopwatch;
 import com.squareup.picasso.Picasso.LoadedFrom;
@@ -81,6 +82,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private ShakeDetector shakeDetector;
     private Button previousButton;
     private Button nextButton;
+    private TextView textView;
     //private ViewPageAdapter viewPageAdapter;
 
     @Override
@@ -118,7 +120,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         //viewPageAdapter = new ViewPageAdapter(this);
         //viewPager.setAdapter(viewPageAdapter);
         imageView = (ImageView) findViewById(R.id.image);
-
+        textView = (TextView) findViewById(R.id.text_box);
         slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
         favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
         previousButton = (Button) findViewById(R.id.previous_button);
@@ -301,6 +303,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void setSaying(Saying saying) {
         Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
+        textView.setText(saying.getText());
         //viewPageAdapter.addSaying(saying);
 
         if (shareActionProvider != null) {
