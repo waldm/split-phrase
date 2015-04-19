@@ -179,4 +179,9 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     public void updateShareIntent() {
         // Widget has no share button
     }
+
+    @Override
+    public void displaySaying(Saying currentSaying, Bitmap bitmap) {
+        throw new UnsupportedOperationException();
+    }
 }

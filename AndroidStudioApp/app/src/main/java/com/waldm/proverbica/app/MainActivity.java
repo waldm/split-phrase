@@ -34,6 +34,7 @@ import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.app.ShakeDetector.Callback;
+import com.waldm.proverbica.controllers.SayingController;
 import com.waldm.proverbica.favourites.FavouritesActivity;
 import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
@@ -52,7 +53,7 @@ import com.waldm.proverbica.views.ViewPageAdapter;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer, Target,
+public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
         Callback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -65,7 +66,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String SAYING_IMAGE = "SayingImage";
     private static final String WALDM = "WALDM";
     private SayingRetriever sayingRetriever;
-    private ImageHandler imageHandler;
     private ImageView imageView;
     //private CustomViewPager viewPager;
     private ShareActionProvider shareActionProvider;
@@ -83,6 +83,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Button previousButton;
     private Button nextButton;
     private TextView textView;
+    private SayingController sayingController;
     //private ViewPageAdapter viewPageAdapter;
 
     @Override
@@ -106,14 +107,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         };
 
-        imageHandler = new ImageHandler(this);
-        imageHandler.setTarget(this);
-
         if (SettingsManager.getPrefAlwaysUseFile(this)) {
             sayingRetriever = new FileSayingRetriever(this, this);
         } else {
             sayingRetriever = new WebSayingRetriever(this, this);
         }
+
+        sayingController = new SayingController(this, this);
 
         //viewPager = (CustomViewPager) findViewById(R.id.view_pager);
         //viewPager.setFields(sayingRetriever, this);
@@ -303,14 +303,12 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void setSaying(Saying saying) {
         Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
-        textView.setText(saying.getText());
+        sayingController.setSaying(saying);
         //viewPageAdapter.addSaying(saying);
 
         if (shareActionProvider != null) {
             updateShareIntent();
         }
-
-        imageHandler.loadNextImage(saying.getImageLocation());
     }
 
     @Override
@@ -339,6 +337,16 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         //shareIntent.putExtra(Intent.EXTRA_TEXT, viewPageAdapter.getCurrentSayingText() + " - http://proverbica.com");
         shareIntent.setType("text/plain");
         shareActionProvider.setShareIntent(shareIntent);
+    }
+
+    @Override
+    public void displaySaying(Saying currentSaying, Bitmap bitmap) {
+        Log.e(WALDM, "displaySaying");
+        textView.setText(currentSaying.getText());
+        imageView.setImageBitmap(bitmap);
+
+        int drawable = android.R.drawable.btn_star;
+        favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
     }
 
     @Override
@@ -371,38 +379,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
     }
 
-    @Override
-    public void onPrepareLoad(Drawable arg0) {
-        Log.e(WALDM, "onPrepareLoad");
-        if (NetworkConnectivity.isNetworkAvailable(this) && !SettingsManager.getPrefAlwaysUseFile(this)) {
-            Log.d(TAG, "Loading image");
-        }
-    }
-
-    @Override
-    public void onBitmapLoaded(Bitmap bitmap, LoadedFrom arg1) {
-        Log.e(WALDM, "onBitmapLoaded");
-        Log.d(TAG, "Image loaded");
-        imageView.setImageBitmap(bitmap);
-        //viewPageAdapter.addBitmap(bitmap);
-
-        int drawable = android.R.drawable.btn_star;
-        favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
-    }
-
-    @Override
-    public void onBitmapFailed(Drawable arg0) {
-        Log.e(WALDM, "onBitmapFailed");
-        Log.d(TAG, "Image failed to load");
-    }
-
     private void toggleSayingIsFavourited() {
         Log.e(WALDM, "toggleSayingIsFavourited");
-        //if (favourites.contains(viewPageAdapter.getCurrentSayingText())) {
-        //    favourites.remove(viewPageAdapter.getCurrentSayingText());
-        //} else {
-//            favourites.add(viewPageAdapter.getCurrentSayingText());
-//        }
+        String currentSayingText = sayingController.getCurrentSaying().getText();
+        if (favourites.contains(currentSayingText)) {
+            favourites.remove(currentSayingText);
+        } else {
+            favourites.add(currentSayingText);
+        }
     }
 
     @Override
