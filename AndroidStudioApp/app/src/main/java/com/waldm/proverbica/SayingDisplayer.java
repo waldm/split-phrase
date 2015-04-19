@@ -10,5 +10,5 @@ public interface SayingDisplayer {
 
     void updateShareIntent();
 
-    void displaySaying(Saying currentSaying, Bitmap bitmap);
+    void displaySaying(Saying currentSaying, Bitmap bitmap, boolean canGoBack);
 }

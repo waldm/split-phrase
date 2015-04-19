@@ -55,9 +55,9 @@ public class SayingController implements Target {
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
         Log.e(TAG, "onBitmapLoaded");
         Log.d(TAG, "Image loaded");
-        sayingDisplayer.displaySaying(tempSaying, bitmap);
-        sayings.add(new Pair<>(tempSaying, bitmap));
         currentSayingIndex++;
+        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
+        sayings.add(new Pair<>(tempSaying, bitmap));
         tempSaying = null;
     }
 
@@ -65,9 +65,9 @@ public class SayingController implements Target {
     public void onBitmapFailed(Drawable arg0) {
         Log.e(TAG, "onBitmapFailed");
         Log.d(TAG, "Image failed to load");
-        sayingDisplayer.displaySaying(tempSaying, null);
-        sayings.add(new Pair<Saying, Bitmap>(tempSaying, null));
         currentSayingIndex++;
+        sayingDisplayer.displaySaying(tempSaying, null, currentSayingIndex > 0);
+        sayings.add(new Pair<Saying, Bitmap>(tempSaying, null));
         tempSaying = null;
     }
 
@@ -93,7 +93,7 @@ public class SayingController implements Target {
         }else{
             currentSayingIndex++;
             Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
-            sayingDisplayer.displaySaying(saying.first, saying.second);
+            sayingDisplayer.displaySaying(saying.first, saying.second, true);
         }
     }
 
@@ -103,7 +103,7 @@ public class SayingController implements Target {
         } else {
             currentSayingIndex--;
             Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
-            sayingDisplayer.displaySaying(saying.first, saying.second);
+            sayingDisplayer.displaySaying(saying.first, saying.second, currentSayingIndex > 0);
         }
     }
 }

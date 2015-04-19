@@ -181,7 +181,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void displaySaying(Saying currentSaying, Bitmap bitmap) {
+    public void displaySaying(Saying currentSaying, Bitmap bitmap, boolean canGoBack) {
         throw new UnsupportedOperationException();
     }
 }

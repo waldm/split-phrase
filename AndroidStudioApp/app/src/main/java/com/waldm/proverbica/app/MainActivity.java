@@ -335,13 +335,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     }
 
     @Override
-    public void displaySaying(Saying currentSaying, Bitmap bitmap) {
+    public void displaySaying(Saying currentSaying, Bitmap bitmap, boolean canGoBack) {
         Log.e(WALDM, "displaySaying");
         textView.setText(currentSaying.getText());
         imageView.setImageBitmap(bitmap);
 
         int drawable = android.R.drawable.btn_star;
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
+
+        previousButton.setEnabled(canGoBack);
     }
 
     @Override
