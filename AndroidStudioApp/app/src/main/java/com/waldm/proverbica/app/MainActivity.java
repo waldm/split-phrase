@@ -297,10 +297,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void setSaying(Saying saying) {
         Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
         sayingController.setSaying(saying);
-
-        if (shareActionProvider != null) {
-            updateShareIntent();
-        }
+        updateShareIntent();
     }
 
     @Override
@@ -344,6 +341,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
 
         previousButton.setEnabled(canGoBack);
+        updateShareIntent();
     }
 
     @Override
