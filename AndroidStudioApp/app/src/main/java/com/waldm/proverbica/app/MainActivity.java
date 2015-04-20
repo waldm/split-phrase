@@ -76,21 +76,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.e(WALDM, "onCreate: " +  savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setTitle(getString(R.string.app_name));
 
-        SayingRetriever sayingRetriever = SettingsManager.getPrefAlwaysUseFile(this) ? new FileSayingRetriever(this) : new WebSayingRetriever(this);
-        sayingController = new SayingController(this, this, sayingRetriever);
-        favouritesController = new FavouritesController(this);
-        slideshowController = new SlideshowController(sayingController, this);
-
-        imageView = (ImageView) findViewById(R.id.image);
-        textView = (TextView) findViewById(R.id.text_box);
-        slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
-        favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
-        previousButton = (Button) findViewById(R.id.previous_button);
-        nextButton = (Button) findViewById(R.id.next_button);
-
+        initialiseControllers();
+        initialiseViews();
         addClickListeners();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -106,6 +95,22 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             slideshowController.setIsSlideshowRunning(savedInstanceState.getBoolean(SLIDESHOW_RUNNING));
             sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
         }
+    }
+
+    private void initialiseViews() {
+        imageView = (ImageView) findViewById(R.id.image);
+        textView = (TextView) findViewById(R.id.text_box);
+        slideShowButton = (ProverbicaButton) findViewById(R.id.button_slideshow);
+        favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
+        previousButton = (Button) findViewById(R.id.previous_button);
+        nextButton = (Button) findViewById(R.id.next_button);
+    }
+
+    private void initialiseControllers() {
+        SayingRetriever sayingRetriever = SettingsManager.getPrefAlwaysUseFile(this) ? new FileSayingRetriever(this) : new WebSayingRetriever(this);
+        sayingController = new SayingController(this, this, sayingRetriever);
+        favouritesController = new FavouritesController(this);
+        slideshowController = new SlideshowController(sayingController, this);
     }
 
     private boolean tryLoadSayingFromWidget(Intent intent) {
