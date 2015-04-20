@@ -126,7 +126,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         } else {
             slideshowRunning = savedInstanceState.getBoolean(SLIDESHOW_RUNNING);
-            setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
+            sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
 
             if (slideshowRunning) {
                 startSlideshow();
@@ -140,7 +140,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             // Load saying currently being shown in widget
             Saying saying = SayingIO.readSaying(this);
             if (saying != null) {
-                setSaying(saying);
+                sayingController.setSaying(saying);
                 return true;
             }
         }
@@ -284,13 +284,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.e(WALDM, "hideButtons");
         handler.postDelayed(hideSlideshowButton, hideTime);
         handler.postDelayed(hideFavouritesButton, hideTime);
-    }
-
-    @Override
-    public void setSaying(Saying saying) {
-        Log.e(WALDM, "setSaying: " + saying.getText() + " - " + saying.getImageLocation());
-        sayingController.setSaying(saying);
-        updateShareIntent();
     }
 
     @Override

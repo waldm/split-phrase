@@ -3,9 +3,6 @@ package com.waldm.proverbica;
 import android.graphics.Bitmap;
 
 public interface SayingDisplayer {
-
-    void setSaying(Saying saying);
-
     void updateFavouritesButton(float alpha);
 
     void updateShareIntent();
