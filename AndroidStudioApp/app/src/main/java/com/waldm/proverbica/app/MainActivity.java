@@ -79,13 +79,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         setTitle(getString(R.string.app_name));
 
-        SayingRetriever sayingRetriever;
-        if (SettingsManager.getPrefAlwaysUseFile(this)) {
-            sayingRetriever = new FileSayingRetriever(this);
-        } else {
-            sayingRetriever = new WebSayingRetriever(this);
-        }
-
+        SayingRetriever sayingRetriever = SettingsManager.getPrefAlwaysUseFile(this) ? new FileSayingRetriever(this) : new WebSayingRetriever(this);
         sayingController = new SayingController(this, this, sayingRetriever);
         favouritesController = new FavouritesController(this);
         slideshowController = new SlideshowController(sayingController, this);
