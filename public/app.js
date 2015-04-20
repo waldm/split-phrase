@@ -4,39 +4,26 @@
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-44805097-1', 'young-escarpment-2304.herokuapp.com');
+ga('create', 'UA-44805097-1', 'proverbica.com');
 ga('send', 'pageview');
-  
-var bgCounter = 0,
-    backgrounds = [
-       "lion.jpg",
-       "monkey.jpg",
-       "gorilla.jpg",
-       "hawk.jpg",
-       "owl.jpg",
-       "dog.jpg",
-       "tiger.jpg",
-       "polar_bear.jpg",
-       "elephant.jpg",
-       "leopard.jpg",
-       "cat.jpg"
-    ];
 
 // Changes the background based on the global above
-// TODO: Get rid of global
 function changeBackground()
 {
     if ($('#curtain').css('opacity') == 0) {
 		$('#curtain').animate({'opacity': 1}, 500, function() {
 			var regexVal = new RegExp(/[\w]+.jpg/);
 			var currentBackground = $('body').css('background-image').match(regexVal)[0];
-			var newBackground = backgrounds[Math.floor(Math.random()*backgrounds.length)];
+			var newBackground = currentBackground;
 			
 			while (currentBackground == newBackground) {
-				newBackground = backgrounds[Math.floor(Math.random()*backgrounds.length)];
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "/bg", false);
+        xmlHttp.send(null);
+				newBackground = xmlHttp.responseText;
 			}
 			
-			$('body').css({'background': '#000 url(images/'+newBackground+') no-repeat center', 'background-size': 'cover'});
+			$('body').css({'background': '#000 url('+newBackground+') no-repeat center', 'background-size': 'cover'});
 			$('#saying').animate({'opacity' : 1}, 500);
 		});
 	} else {
