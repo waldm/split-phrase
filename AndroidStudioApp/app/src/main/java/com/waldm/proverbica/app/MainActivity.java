@@ -392,6 +392,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
+        previousButton.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.INVISIBLE);
+
         stopwatch.reset();
         stopwatch.start();
         sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
@@ -407,6 +410,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
+        previousButton.setVisibility(View.VISIBLE);
+        nextButton.setVisibility(View.VISIBLE);
+
         handler.removeCallbacks(moveToNextImage);
         stopwatch.reset();
     }
