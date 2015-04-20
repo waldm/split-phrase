@@ -36,7 +36,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
-        sayingRetriever = new FileSayingRetriever(this, this);
+        sayingRetriever = new FileSayingRetriever(this);
     }
 
     @Override

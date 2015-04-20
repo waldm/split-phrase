@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
@@ -20,7 +21,7 @@ import com.waldm.proverbica.settings.SettingsManager;
 
 import java.util.List;
 
-public class SayingController implements Target {
+public class SayingController implements Target, SayingListener {
     private static final String TAG = SayingController.class.getSimpleName();
     private final Context context;
     private final List<Pair<Saying, Bitmap>> sayings = Lists.newArrayList();
@@ -35,9 +36,10 @@ public class SayingController implements Target {
         imageHandler.setTarget(this);
         this.context = context;
         this.sayingDisplayer = sayingDisplayer;
-        this.sayingRetriever = sayingRetriever;
+        setSayingRetriever(sayingRetriever);
     }
 
+    @Override
     public void setSaying(Saying saying) {
         this.tempSaying = saying;
         imageHandler.loadImage(saying.getImageLocation());
@@ -85,6 +87,7 @@ public class SayingController implements Target {
 
     public void setSayingRetriever(SayingRetriever sayingRetriever) {
         this.sayingRetriever = sayingRetriever;
+        sayingRetriever.setSayingListener(this);
     }
 
     public void displayNextSaying() {

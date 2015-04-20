@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
@@ -15,12 +16,11 @@ public class WebSayingRetriever implements SayingRetriever, CallbackHandler {
     private static final String TAG = WebSayingRetriever.class.getSimpleName();
 
     private final Context context;
-    private final SayingDisplayer sayingDisplayer;
     private AsyncRetriever asyncTask;
+    private SayingListener sayingListener;
 
-    public WebSayingRetriever(Context context, SayingDisplayer sayingDisplayer) {
+    public WebSayingRetriever(Context context) {
         this.context = context;
-        this.sayingDisplayer = sayingDisplayer;
         asyncTask = new AsyncRetriever(this);
     }
 
@@ -31,13 +31,18 @@ public class WebSayingRetriever implements SayingRetriever, CallbackHandler {
             Log.d(TAG, "Loading saying from the internet");
             asyncTask.execute();
         } else {
-            new FileSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource, imageSize);
+            new FileSayingRetriever(context).loadSaying(sayingSource, imageSize);
         }
+    }
+
+    @Override
+    public void setSayingListener(SayingListener sayingListener) {
+        this.sayingListener = sayingListener;
     }
 
     @Override
     public void alertSayingLoaded(Saying saying) {
         asyncTask = new AsyncRetriever(this);
-        sayingDisplayer.setSaying(saying);
+        sayingListener.setSaying(saying);
     }
 }

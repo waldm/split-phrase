@@ -99,9 +99,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         SayingRetriever sayingRetriever;
         if (SettingsManager.getPrefAlwaysUseFile(this)) {
-            sayingRetriever = new FileSayingRetriever(this, this);
+            sayingRetriever = new FileSayingRetriever(this);
         } else {
-            sayingRetriever = new WebSayingRetriever(this, this);
+            sayingRetriever = new WebSayingRetriever(this);
         }
 
         sayingController = new SayingController(this, this, sayingRetriever);
@@ -362,9 +362,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.e(WALDM, "onSharedPreferenceChanged");
         if (key.equals(getString(R.string.pref_always_file_key))) {
             if (SettingsManager.getPrefAlwaysUseFile(this)) {
-                sayingController.setSayingRetriever(new FileSayingRetriever(this, this));
+                sayingController.setSayingRetriever(new FileSayingRetriever(this));
             } else {
-                sayingController.setSayingRetriever(new WebSayingRetriever(this, this));
+                sayingController.setSayingRetriever(new WebSayingRetriever(this));
             }
         }
     }

@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
 import com.waldm.proverbica.infrastructure.SayingSource;
@@ -27,23 +28,27 @@ public class FileSayingRetriever implements SayingRetriever {
     private static final String FILENAME = "sayings.txt";
     private List<String> sayings;
     private final Context context;
-    private final SayingDisplayer sayingDisplayer;
+    private SayingListener sayingListener;
     private String[] backgrounds;
     private String currentBackground;
 
-    public FileSayingRetriever(Context context, SayingDisplayer sayingDisplayer) {
+    public FileSayingRetriever(Context context) {
         this.context = context;
-        this.sayingDisplayer = sayingDisplayer;
     }
 
     @Override
     public void loadSaying(SayingSource sayingSource, ImageSize imageSize) {
         if (NetworkConnectivity.isNetworkAvailable(context) && !SettingsManager.getPrefAlwaysUseFile(context)
                 && sayingSource != SayingSource.FILE) {
-            new WebSayingRetriever(context, sayingDisplayer).loadSaying(sayingSource, imageSize);
+            new WebSayingRetriever(context).loadSaying(sayingSource, imageSize);
         } else {
-            sayingDisplayer.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation(imageSize)));
+            sayingListener.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation(imageSize)));
         }
+    }
+
+    @Override
+    public void setSayingListener(SayingListener sayingListener) {
+        this.sayingListener = sayingListener;
     }
 
     private String loadImageLocation(ImageSize imageSize) {
