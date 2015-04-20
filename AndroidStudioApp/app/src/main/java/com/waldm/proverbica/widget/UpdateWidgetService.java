@@ -134,7 +134,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void setSaying(Saying saying) {
+    public void alertNewSaying(Saying saying) {
         if (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
             sayingRetriever.loadSaying(SayingSource.FILE, ImageSize.SMALL);
         } else {

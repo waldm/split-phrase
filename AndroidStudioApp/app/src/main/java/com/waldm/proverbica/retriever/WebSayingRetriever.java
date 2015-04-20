@@ -43,6 +43,6 @@ public class WebSayingRetriever implements SayingRetriever, CallbackHandler {
     @Override
     public void alertSayingLoaded(Saying saying) {
         asyncTask = new AsyncRetriever(this);
-        sayingListener.setSaying(saying);
+        sayingListener.alertNewSaying(saying);
     }
 }

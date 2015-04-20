@@ -40,6 +40,10 @@ public class SayingController implements Target, SayingListener {
     }
 
     @Override
+    public void alertNewSaying(Saying saying) {
+        setSaying(saying);
+    }
+
     public void setSaying(Saying saying) {
         this.tempSaying = saying;
         imageHandler.loadImage(saying.getImageLocation());

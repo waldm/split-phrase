@@ -42,7 +42,7 @@ public class FileSayingRetriever implements SayingRetriever {
                 && sayingSource != SayingSource.FILE) {
             new WebSayingRetriever(context).loadSaying(sayingSource, imageSize);
         } else {
-            sayingListener.setSaying(new Saying(loadSayingText(sayingSource), loadImageLocation(imageSize)));
+            sayingListener.alertNewSaying(new Saying(loadSayingText(sayingSource), loadImageLocation(imageSize)));
         }
     }
 

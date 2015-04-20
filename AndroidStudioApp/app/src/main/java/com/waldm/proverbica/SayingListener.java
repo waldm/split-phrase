@@ -1,5 +1,5 @@
 package com.waldm.proverbica;
 
 public interface SayingListener {
-    void setSaying(Saying saying);
+    void alertNewSaying(Saying saying);
 }
