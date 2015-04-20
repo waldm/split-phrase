@@ -88,7 +88,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void run() {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    //viewPager.moveToEnd();
+                    sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
                     stopwatch.reset();
                     stopwatch.start();
                 }
@@ -333,7 +333,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         int drawable = android.R.drawable.btn_star;
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
 
-        previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
+        if (!slideshowRunning) {
+            previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
+        }
         updateShareIntent();
     }
 
