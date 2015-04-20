@@ -28,9 +28,9 @@ import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.app.ShakeDetector.Callback;
+import com.waldm.proverbica.controllers.FavouritesController;
 import com.waldm.proverbica.controllers.SayingController;
 import com.waldm.proverbica.favourites.FavouritesActivity;
-import com.waldm.proverbica.favourites.FavouritesIO;
 import com.waldm.proverbica.info.InfoActivity;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.SayingSource;
@@ -43,7 +43,6 @@ import com.waldm.proverbica.views.ProverbicaButton;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
@@ -68,13 +67,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Runnable hideSlideshowButton;
     private Runnable moveToNextImage;
     private Stopwatch stopwatch = Stopwatch.createUnstarted();
-    private List<String> favourites;
     private Menu menu;
     private ShakeDetector shakeDetector;
     private Button previousButton;
     private Button nextButton;
     private TextView textView;
     private SayingController sayingController;
+    private FavouritesController favouritesController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +104,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         sayingController = new SayingController(this, this, sayingRetriever);
+        favouritesController = new FavouritesController(this);
 
         imageView = (ImageView) findViewById(R.id.image);
         textView = (TextView) findViewById(R.id.text_box);
@@ -185,7 +185,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
                 handler.removeCallbacks(hideFavouritesButton);
                 hideButtons(BUTTON_HIDE_TIME);
-                FavouritesIO.writeFavourites(favourites, MainActivity.this);
+                favouritesController.saveFavourites(MainActivity.this);
             }
         });
 
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             shakeDetector = new ShakeDetector(this, (SensorManager) getSystemService(SENSOR_SERVICE));
         }
 
-        favourites = FavouritesIO.readFavourites(this);
+        favouritesController.readFavourites(this);
         updateFavouritesMenuItemDrawable();
     }
 
@@ -256,7 +256,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         }
 
         menu.findItem(R.id.menu_item_favourites).setIcon(
-                favourites.isEmpty() ? android.R.drawable.btn_star : android.R.drawable.btn_star_big_on);
+                favouritesController.hasFavourites() ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star);
     }
 
     private void initialiseHideButtonRunnables() {
@@ -291,7 +291,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         Log.e(WALDM, "onCreateOptionsMenu");
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main, menu);
-        if (favourites != null) {
+        if (favouritesController.hasFavourites()) {
             updateFavouritesMenuItemDrawable();
         }
         shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
@@ -365,11 +365,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private void toggleSayingIsFavourited() {
         Log.e(WALDM, "toggleSayingIsFavourited");
         String currentSayingText = sayingController.getCurrentSaying().getText();
-        if (favourites.contains(currentSayingText)) {
-            favourites.remove(currentSayingText);
-        } else {
-            favourites.add(currentSayingText);
-        }
+        favouritesController.toggle(currentSayingText);
     }
 
     @Override
@@ -416,9 +412,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
         String currentSayingText = sayingController.getCurrentSaying().getText();
-        int drawable = favourites.contains(currentSayingText) ? android.R.drawable.btn_star_big_on
+        int drawable = favouritesController.hasFavourite(currentSayingText) ? android.R.drawable.btn_star_big_on
                 : android.R.drawable.btn_star;
-        int text = favourites.contains(currentSayingText) ? R.string.remove_from_favourites
+        int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
                 : R.string.add_to_favourites;
         favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
     }
