@@ -23,13 +23,14 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
-import com.google.common.base.Stopwatch;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SlideshowDisplayer;
 import com.waldm.proverbica.app.ShakeDetector.Callback;
 import com.waldm.proverbica.controllers.FavouritesController;
 import com.waldm.proverbica.controllers.SayingController;
+import com.waldm.proverbica.controllers.SlideshowController;
 import com.waldm.proverbica.favourites.FavouritesActivity;
 import com.waldm.proverbica.info.InfoActivity;
 import com.waldm.proverbica.infrastructure.ImageSize;
@@ -43,14 +44,11 @@ import com.waldm.proverbica.views.ProverbicaButton;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
-import java.util.concurrent.TimeUnit;
-
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
-        Callback {
+        Callback, SlideshowDisplayer {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final float BUTTON_TRANSPARENCY = 0.3f;
-    protected static final long SLIDESHOW_TRANSITION = 3000;
     private static final int BUTTON_HIDE_TIME = 2000;
 
     private static final String SLIDESHOW_RUNNING = "SLIDESHOW_RUNNING";
@@ -59,21 +57,19 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private static final String WALDM = "WALDM";
     private ImageView imageView;
     private ShareActionProvider shareActionProvider;
-    private Handler handler = new Handler(Looper.getMainLooper());
-    private boolean slideshowRunning;
     private ProverbicaButton slideShowButton;
     private ProverbicaButton favouritesButton;
     private Runnable hideFavouritesButton;
     private Runnable hideSlideshowButton;
-    private Runnable moveToNextImage;
-    private Stopwatch stopwatch = Stopwatch.createUnstarted();
     private Menu menu;
     private ShakeDetector shakeDetector;
     private Button previousButton;
     private Button nextButton;
     private TextView textView;
+    private Handler handler = new Handler(Looper.getMainLooper());
     private SayingController sayingController;
     private FavouritesController favouritesController;
+    private SlideshowController slideshowController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,19 +78,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         setContentView(R.layout.activity_main);
 
         setTitle(getString(R.string.app_name));
-
-        moveToNextImage = new Runnable() {
-            @Override
-            public void run() {
-                if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > SLIDESHOW_TRANSITION) {
-                    sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-                    stopwatch.reset();
-                    stopwatch.start();
-                }
-
-                handler.postDelayed(moveToNextImage, SLIDESHOW_TRANSITION);
-            }
-        };
 
         SayingRetriever sayingRetriever;
         if (SettingsManager.getPrefAlwaysUseFile(this)) {
@@ -105,6 +88,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
         sayingController = new SayingController(this, this, sayingRetriever);
         favouritesController = new FavouritesController(this);
+        slideshowController = new SlideshowController(sayingController, this);
 
         imageView = (ImageView) findViewById(R.id.image);
         textView = (TextView) findViewById(R.id.text_box);
@@ -125,12 +109,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
             }
         } else {
-            slideshowRunning = savedInstanceState.getBoolean(SLIDESHOW_RUNNING);
+            slideshowController.setIsSlideshowRunning(savedInstanceState.getBoolean(SLIDESHOW_RUNNING));
             sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
-
-            if (slideshowRunning) {
-                startSlideshow();
-            }
         }
     }
 
@@ -161,14 +141,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             @Override
             public void onClick(View v) {
                 slideShowButton.setAlpha(1f);
-                if (MainActivity.this.slideshowRunning) {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-                    stopSlideshow();
-                } else {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    startSlideshow();
-                }
-
+                slideshowController.setIsSlideshowRunning(!slideshowController.isSlideshowRunning());
                 handler.removeCallbacks(hideSlideshowButton);
                 hideButtons(BUTTON_HIDE_TIME);
             }
@@ -208,9 +181,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onPause() {
         Log.e(WALDM, "onPause");
         super.onPause();
-        if (stopwatch.isRunning()) {
-            stopwatch.stop();
-        }
+        slideshowController.stopStopwatch();
 
         handler.removeCallbacks(hideSlideshowButton);
         handler.removeCallbacks(hideFavouritesButton);
@@ -243,7 +214,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.e(WALDM, "onSaveInstanceState");
-        outState.putBoolean(SLIDESHOW_RUNNING, slideshowRunning);
+        outState.putBoolean(SLIDESHOW_RUNNING, slideshowController.isSlideshowRunning());
         outState.putString(SAYING_TEXT, sayingController.getCurrentSaying().getText());
         outState.putString(SAYING_IMAGE, sayingController.getCurrentSaying().getImageLocation());
         super.onSaveInstanceState(outState);
@@ -326,7 +297,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         int drawable = android.R.drawable.btn_star;
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
 
-        if (!slideshowRunning) {
+        if (!slideshowController.isSlideshowRunning()) {
             previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
         }
         updateShareIntent();
@@ -374,40 +345,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 
-    private void startSlideshow() {
-        Log.e(WALDM, "startSlideshow");
-        slideshowRunning = true;
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null){
-            actionBar.hide();
-        }
-
-        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
-        previousButton.setVisibility(View.INVISIBLE);
-        nextButton.setVisibility(View.INVISIBLE);
-
-        stopwatch.reset();
-        stopwatch.start();
-        sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
-        handler.postDelayed(moveToNextImage, 0);
-    }
-
-    private void stopSlideshow() {
-        Log.e(WALDM, "stopSlideshow");
-        slideshowRunning = false;
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null){
-            actionBar.show();
-        }
-
-        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
-        previousButton.setVisibility(View.VISIBLE);
-        nextButton.setVisibility(View.VISIBLE);
-
-        handler.removeCallbacks(moveToNextImage);
-        stopwatch.reset();
-    }
-
     @Override
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
@@ -417,5 +354,31 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
                 : R.string.add_to_favourites;
         favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+    }
+
+    @Override
+    public void startSlideshow() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.hide();
+        }
+
+        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
+        previousButton.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void stopSlideshow() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.show();
+        }
+
+        slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_play, 1, R.string.play_slideshow);
+        previousButton.setVisibility(View.VISIBLE);
+        nextButton.setVisibility(View.VISIBLE);
     }
 }
