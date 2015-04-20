@@ -57,20 +57,14 @@ public class SayingController implements Target, SayingListener {
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
         Log.e(TAG, "onBitmapLoaded");
         Log.d(TAG, "Image loaded");
-        currentSayingIndex++;
-        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
-        sayings.add(new Pair<>(tempSaying, bitmap));
-        tempSaying = null;
+        displayTempSaying(bitmap);
     }
 
     @Override
     public void onBitmapFailed(Drawable arg0) {
         Log.e(TAG, "onBitmapFailed");
         Log.d(TAG, "Image failed to load");
-        currentSayingIndex++;
-        sayingDisplayer.displaySaying(tempSaying, null, currentSayingIndex > 0);
-        sayings.add(new Pair<Saying, Bitmap>(tempSaying, null));
-        tempSaying = null;
+        displayTempSaying(null);
     }
 
     public Saying getCurrentSaying() {
@@ -108,5 +102,12 @@ public class SayingController implements Target, SayingListener {
             Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
             sayingDisplayer.displaySaying(saying.first, saying.second, currentSayingIndex > 0);
         }
+    }
+
+    private void displayTempSaying(Bitmap bitmap){
+        currentSayingIndex++;
+        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
+        sayings.add(new Pair<>(tempSaying, bitmap));
+        tempSaying = null;
     }
 }
