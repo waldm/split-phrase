@@ -333,7 +333,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         int drawable = android.R.drawable.btn_star;
         favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
 
-        previousButton.setEnabled(canGoBack);
+        previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
         updateShareIntent();
     }
 
