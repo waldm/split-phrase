@@ -15,7 +15,9 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:background="#00000000"
             android:text="&lt;"
             android:id="@+id/previous_button"/>
         <RelativeLayout
@@ -48,7 +50,9 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:background="#00000000"
             android:text="&gt;"
             android:id="@+id/next_button"/>
     </LinearLayout>
