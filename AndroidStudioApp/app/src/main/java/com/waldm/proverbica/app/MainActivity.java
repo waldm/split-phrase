@@ -293,8 +293,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         textView.setText(currentSaying.getText());
         imageView.setImageBitmap(bitmap);
 
-        int drawable = android.R.drawable.btn_star;
-        favouritesButton.setBackgroundTextAndAlpha(drawable, BUTTON_TRANSPARENCY, R.string.add_to_favourites);
+        updateFavouritesButton(1);
 
         if (!slideshowController.isSlideshowRunning()) {
             previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
@@ -347,12 +346,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
-        String currentSayingText = sayingController.getCurrentSaying().getText();
-        int drawable = favouritesController.hasFavourite(currentSayingText) ? android.R.drawable.btn_star_big_on
-                : android.R.drawable.btn_star;
-        int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
-                : R.string.add_to_favourites;
-        favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+        Saying currentSaying = sayingController.getCurrentSaying();
+        if (currentSaying != null) {
+            String currentSayingText = currentSaying.getText();
+            int drawable = favouritesController.hasFavourite(currentSayingText) ? android.R.drawable.btn_star_big_on
+                    : android.R.drawable.btn_star;
+            int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
+                    : R.string.add_to_favourites;
+            favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+        }
     }
 
     @Override

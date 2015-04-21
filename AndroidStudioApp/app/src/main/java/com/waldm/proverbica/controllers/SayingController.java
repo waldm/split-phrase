@@ -110,8 +110,8 @@ public class SayingController implements Target, SayingListener {
 
     private void displayTempSaying(Bitmap bitmap){
         currentSayingIndex++;
-        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
         sayings.add(new Pair<>(tempSaying, bitmap));
+        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
         tempSaying = null;
     }
 }
