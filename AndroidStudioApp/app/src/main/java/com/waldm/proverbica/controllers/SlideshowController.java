@@ -40,6 +40,8 @@ public class SlideshowController {
         this.isSlideshowRunning = isSlideshowRunning;
         if (isSlideshowRunning) {
             startSlideshow();
+        } else {
+            stopSlideshow();
         }
     }
 
