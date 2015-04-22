@@ -3,16 +3,18 @@ package com.waldm.proverbica.favourites;
 import java.util.List;
 import java.util.Map;
 
-import android.app.ActionBar;
-import android.app.ListActivity;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
@@ -23,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.waldm.proverbica.R;
 
-public class FavouritesActivity extends ListActivity {
+public class FavouritesFragment extends ListFragment {
 
     private static final String PROVERB_KEY = "proverb_key";
     private List<Map<String, String>> list;
@@ -31,25 +33,20 @@ public class FavouritesActivity extends ListActivity {
     private SimpleAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favourites);
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_favourites, container, false);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        List<String> favourites = FavouritesIO.readFavourites(this);
+        List<String> favourites = FavouritesIO.readFavourites(getActivity());
         list = Lists.newArrayList();
         for (String favourite : favourites) {
             list.add(ImmutableMap.of(PROVERB_KEY, favourite));
         }
 
-        adapter = new SimpleAdapter(this, list, R.layout.list_item_favourites, new String[] { PROVERB_KEY },
+        adapter = new SimpleAdapter(getActivity(), list, R.layout.list_item_favourites, new String[] { PROVERB_KEY },
                 new int[] { R.id.text });
         setListAdapter(adapter);
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -97,13 +94,13 @@ public class FavouritesActivity extends ListActivity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         setListAdapter(null);
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         getListView().setItemChecked(position, true);
         updateShareIntent();
@@ -127,7 +124,7 @@ public class FavouritesActivity extends ListActivity {
 
         getListView().invalidateViews();
 
-        FavouritesIO.writeFavourites(toKeep, this);
+        FavouritesIO.writeFavourites(toKeep, getActivity());
     }
 
     private void updateShareIntent() {
@@ -152,7 +149,7 @@ public class FavouritesActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                NavUtils.navigateUpFromSameTask(getActivity());
                 return true;
         }
         return super.onOptionsItemSelected(item);
