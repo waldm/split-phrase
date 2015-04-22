@@ -93,7 +93,13 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             }
         } else {
             slideshowController.setIsSlideshowRunning(savedInstanceState.getBoolean(SLIDESHOW_RUNNING));
-            sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
+            String sayingText = savedInstanceState.getString(SAYING_TEXT);
+            String sayingImage = savedInstanceState.getString(SAYING_IMAGE);
+            if (sayingText == null || sayingImage == null) {
+                sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+            }else{
+                sayingController.setSaying(new Saying(sayingText, sayingImage));
+            }
         }
     }
 
