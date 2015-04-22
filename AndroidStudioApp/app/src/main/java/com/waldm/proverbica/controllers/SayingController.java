@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
@@ -20,7 +21,7 @@ import com.waldm.proverbica.settings.SettingsManager;
 
 import java.util.List;
 
-public class SayingController implements Target {
+public class SayingController implements Target, SayingListener {
     private static final String TAG = SayingController.class.getSimpleName();
     private final Context context;
     private final List<Pair<Saying, Bitmap>> sayings = Lists.newArrayList();
@@ -35,7 +36,12 @@ public class SayingController implements Target {
         imageHandler.setTarget(this);
         this.context = context;
         this.sayingDisplayer = sayingDisplayer;
-        this.sayingRetriever = sayingRetriever;
+        setSayingRetriever(sayingRetriever);
+    }
+
+    @Override
+    public void alertNewSaying(Saying saying) {
+        setSaying(saying);
     }
 
     public void setSaying(Saying saying) {
@@ -55,20 +61,14 @@ public class SayingController implements Target {
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
         Log.e(TAG, "onBitmapLoaded");
         Log.d(TAG, "Image loaded");
-        currentSayingIndex++;
-        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
-        sayings.add(new Pair<>(tempSaying, bitmap));
-        tempSaying = null;
+        displayTempSaying(bitmap);
     }
 
     @Override
     public void onBitmapFailed(Drawable arg0) {
         Log.e(TAG, "onBitmapFailed");
         Log.d(TAG, "Image failed to load");
-        currentSayingIndex++;
-        sayingDisplayer.displaySaying(tempSaying, null, currentSayingIndex > 0);
-        sayings.add(new Pair<Saying, Bitmap>(tempSaying, null));
-        tempSaying = null;
+        displayTempSaying(null);
     }
 
     public Saying getCurrentSaying() {
@@ -85,6 +85,7 @@ public class SayingController implements Target {
 
     public void setSayingRetriever(SayingRetriever sayingRetriever) {
         this.sayingRetriever = sayingRetriever;
+        sayingRetriever.setSayingListener(this);
     }
 
     public void displayNextSaying() {
@@ -105,5 +106,12 @@ public class SayingController implements Target {
             Pair<Saying, Bitmap> saying = sayings.get(currentSayingIndex);
             sayingDisplayer.displaySaying(saying.first, saying.second, currentSayingIndex > 0);
         }
+    }
+
+    private void displayTempSaying(Bitmap bitmap){
+        currentSayingIndex++;
+        sayings.add(new Pair<>(tempSaying, bitmap));
+        sayingDisplayer.displaySaying(tempSaying, bitmap, currentSayingIndex > 0);
+        tempSaying = null;
     }
 }

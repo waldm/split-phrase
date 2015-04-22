@@ -15,13 +15,14 @@ import com.squareup.picasso.Target;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
+import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.app.MainActivity;
 import com.waldm.proverbica.infrastructure.ImageHandler;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.SayingSource;
 import com.waldm.proverbica.retriever.FileSayingRetriever;
 
-public class UpdateWidgetService extends Service implements SayingDisplayer, Target {
+public class UpdateWidgetService extends Service implements SayingDisplayer, Target, SayingListener {
     private static final String TAG = UpdateWidgetService.class.getSimpleName();
 
     private static final int MAXIMUM_SAYING_LENGTH = 55;
@@ -36,7 +37,8 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     public UpdateWidgetService() {
         imageHandler = new ImageHandler(this);
-        sayingRetriever = new FileSayingRetriever(this, this);
+        sayingRetriever = new FileSayingRetriever(this);
+        sayingRetriever.setSayingListener(this);
     }
 
     @Override
@@ -132,7 +134,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void setSaying(Saying saying) {
+    public void alertNewSaying(Saying saying) {
         if (saying.getText().length() > MAXIMUM_SAYING_LENGTH) {
             sayingRetriever.loadSaying(SayingSource.FILE, ImageSize.SMALL);
         } else {
