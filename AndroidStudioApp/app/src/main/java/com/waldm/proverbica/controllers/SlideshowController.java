@@ -15,8 +15,8 @@ public class SlideshowController {
     private final SlideshowDisplayer slideshowDisplayer;
     private Runnable moveToNextImage;
     private static final long SLIDESHOW_TRANSITION = 3000;
-    private Stopwatch stopwatch = Stopwatch.createUnstarted();
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Stopwatch stopwatch = Stopwatch.createUnstarted();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private boolean isSlideshowRunning;
 
     public SlideshowController(final SayingController sayingController, SlideshowDisplayer slideshowDisplayer){

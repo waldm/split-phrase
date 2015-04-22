@@ -1,8 +1,8 @@
 package com.waldm.proverbica;
 
 public class Saying {
-    private String text;
-    private String imageLocation;
+    private final String text;
+    private final String imageLocation;
 
     public Saying(String text, String imageLocation) {
         this.text = text;

@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     private Button previousButton;
     private Button nextButton;
     private TextView textView;
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private SayingController sayingController;
     private FavouritesController favouritesController;
     private SlideshowController slideshowController;
