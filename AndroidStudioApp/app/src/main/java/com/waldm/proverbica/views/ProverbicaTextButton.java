@@ -19,6 +19,11 @@ public class ProverbicaTextButton extends Button implements ProverbicaButton {
 
     @Override
     public void setBackgroundTextAndAlpha(int backgroundResource, float alpha, int textResource) {
+        setBackgroundAndText(backgroundResource, textResource);
+    }
+
+    @Override
+    public void setBackgroundAndText(int backgroundResource, int textResource) {
         setCompoundDrawablesWithIntrinsicBounds(backgroundResource, 0, 0, 0);
         setText(textResource);
     }
