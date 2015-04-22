@@ -173,16 +173,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
     }
 
     @Override
-    public void updateFavouritesButton(float alpha) {
-        // Widget has no favourites button
-    }
-
-    @Override
-    public void updateShareIntent() {
-        // Widget has no share button
-    }
-
-    @Override
     public void displaySaying(Saying currentSaying, Bitmap bitmap, boolean canGoBack) {
         throw new UnsupportedOperationException();
     }

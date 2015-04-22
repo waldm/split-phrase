@@ -301,7 +301,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         return true;
     }
 
-    @Override
     public void updateShareIntent() {
         Log.e(WALDM, "updateShareIntent");
         if (shareActionProvider == null) {
@@ -374,7 +373,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 
-    @Override
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
         Saying currentSaying = sayingController.getCurrentSaying();
