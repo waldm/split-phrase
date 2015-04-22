@@ -29,7 +29,7 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
 
     public static final String EXTRA_STARTED_VIA_WIDGET = "ExtraStartedViaWidget";
 
-    private ImageHandler imageHandler;
+    private final ImageHandler imageHandler;
     private RemoteViews remoteViews;
     private int[] allWidgetIds;
     private Saying saying;
@@ -170,16 +170,6 @@ public class UpdateWidgetService extends Service implements SayingDisplayer, Tar
         for (int widgetId : allWidgetIds) {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
-    }
-
-    @Override
-    public void updateFavouritesButton(float alpha) {
-        // Widget has no favourites button
-    }
-
-    @Override
-    public void updateShareIntent() {
-        // Widget has no share button
     }
 
     @Override

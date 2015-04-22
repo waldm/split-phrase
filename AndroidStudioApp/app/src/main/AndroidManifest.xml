@@ -43,7 +43,7 @@
          </activity>
         
         <activity
-            android:name="com.waldm.proverbica.favourites.FavouritesActivity"
+            android:name=".favourites.FavouritesActivity"
             android:label="@string/favourites" android:screenOrientation="portrait"
             android:parentActivityName="com.waldm.proverbica.app.MainActivity">
             <meta-data

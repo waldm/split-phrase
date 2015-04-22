@@ -19,7 +19,12 @@ public class ProverbicaImageButton extends ImageView implements ProverbicaButton
 
     @Override
     public void setBackgroundTextAndAlpha(int backgroundResource, float alpha, int textResource) {
-        setImageResource(backgroundResource);
+        setBackgroundAndText(backgroundResource, textResource);
         setAlpha(alpha);
+    }
+
+    @Override
+    public void setBackgroundAndText(int backgroundResource, int textResource) {
+        setImageResource(backgroundResource);
     }
 }

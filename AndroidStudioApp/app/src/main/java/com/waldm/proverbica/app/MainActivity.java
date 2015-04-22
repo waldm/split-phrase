@@ -1,7 +1,5 @@
 package com.waldm.proverbica.app;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,16 +11,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.waldm.proverbica.BaseActivity;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
@@ -44,7 +48,7 @@ import com.waldm.proverbica.views.ProverbicaButton;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
+public class MainActivity extends BaseActivity implements OnSharedPreferenceChangeListener, SayingDisplayer,
         Callback, SlideshowDisplayer {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -66,7 +70,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     private Button previousButton;
     private Button nextButton;
     private TextView textView;
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private SayingController sayingController;
     private FavouritesController favouritesController;
     private SlideshowController slideshowController;
@@ -75,7 +79,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(WALDM, "onCreate: " +  savedInstanceState);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         setTitle(getString(R.string.app_name));
 
         initialiseControllers();
@@ -93,8 +96,24 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         } else {
             slideshowController.setIsSlideshowRunning(savedInstanceState.getBoolean(SLIDESHOW_RUNNING));
-            sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
+            String sayingText = savedInstanceState.getString(SAYING_TEXT);
+            String sayingImage = savedInstanceState.getString(SAYING_IMAGE);
+            if (sayingText == null || sayingImage == null) {
+                sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
+            }else{
+                sayingController.setSaying(new Saying(sayingText, sayingImage));
+            }
         }
+    }
+
+    @Override
+    protected boolean hasParentActivity() {
+        return false;
+    }
+
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
     }
 
     private void initialiseViews() {
@@ -104,6 +123,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         favouritesButton = (ProverbicaButton) findViewById(R.id.button_favourite);
         previousButton = (Button) findViewById(R.id.previous_button);
         nextButton = (Button) findViewById(R.id.next_button);
+
+        final Animation animation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
+        animation.setDuration(500); // duration - half a second
+        animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+        animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
+        animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the end so the button will fade back in
+        nextButton.startAnimation(animation);
     }
 
     private void initialiseControllers() {
@@ -129,7 +155,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.e(WALDM,"oneNewIntent");
+        Log.e(WALDM, "oneNewIntent");
         super.onNewIntent(intent);
         tryLoadSayingFromWidget(intent);
     }
@@ -168,9 +194,10 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             }
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener(){
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nextButton.clearAnimation();
                 sayingController.displayNextSaying();
             }
         });
@@ -214,8 +241,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.e(WALDM, "onSaveInstanceState");
         outState.putBoolean(SLIDESHOW_RUNNING, slideshowController.isSlideshowRunning());
-        outState.putString(SAYING_TEXT, sayingController.getCurrentSaying().getText());
-        outState.putString(SAYING_IMAGE, sayingController.getCurrentSaying().getImageLocation());
+        Saying currentSaying = sayingController.getCurrentSaying();
+        if (currentSaying != null) {
+            outState.putString(SAYING_TEXT, currentSaying.getText());
+            outState.putString(SAYING_IMAGE, currentSaying.getImageLocation());
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -264,13 +294,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         if (favouritesController.hasFavourites()) {
             updateFavouritesMenuItemDrawable();
         }
-        shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.menu_item_share));
 
         updateShareIntent();
         return true;
     }
 
-    @Override
     public void updateShareIntent() {
         Log.e(WALDM, "updateShareIntent");
         if (shareActionProvider == null) {
@@ -293,7 +323,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         textView.setText(currentSaying.getText());
         imageView.setImageBitmap(bitmap);
 
-        updateFavouritesButton(1);
+        updateFavouritesButton();
 
         if (!slideshowController.isSlideshowRunning()) {
             previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
@@ -343,8 +373,13 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         sayingController.loadSaying(SayingSource.EITHER, ImageSize.NORMAL);
     }
 
-    @Override
     public void updateFavouritesButton(float alpha) {
+        Log.e(WALDM, "updateFavouritesButton");
+        updateFavouritesButton();
+        favouritesButton.setAlpha(alpha);
+    }
+
+    public void updateFavouritesButton() {
         Log.e(WALDM, "updateFavouritesButton");
         Saying currentSaying = sayingController.getCurrentSaying();
         if (currentSaying != null) {
@@ -353,14 +388,14 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                     : android.R.drawable.btn_star;
             int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
                     : R.string.add_to_favourites;
-            favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+            favouritesButton.setBackgroundAndText(drawable, text);
         }
     }
 
     @Override
     public void startSlideshow() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.hide();
         }
@@ -373,7 +408,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void stopSlideshow() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.show();
         }

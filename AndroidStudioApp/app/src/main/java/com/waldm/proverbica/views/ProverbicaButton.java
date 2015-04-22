@@ -8,4 +8,6 @@ public interface ProverbicaButton {
     void setOnClickListener(OnClickListener onClickListener);
 
     void setAlpha(float f);
+
+    void setBackgroundAndText(int backgroundResource, int textResource);
 }

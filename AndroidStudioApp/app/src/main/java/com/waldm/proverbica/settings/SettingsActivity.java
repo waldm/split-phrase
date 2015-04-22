@@ -1,30 +1,16 @@
 package com.waldm.proverbica.settings;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
+import com.waldm.proverbica.BaseActivity;
+import com.waldm.proverbica.R;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends BaseActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-        ActionBar actionBar = getActionBar();
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected boolean hasParentActivity() {
+        return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getLayoutResource() {
+        return R.layout.activity_settings;
     }
 }

@@ -1,5 +1,15 @@
 package com.waldm.proverbica.retriever;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.waldm.proverbica.Saying;
+import com.waldm.proverbica.SayingListener;
+import com.waldm.proverbica.infrastructure.ImageSize;
+import com.waldm.proverbica.infrastructure.NetworkConnectivity;
+import com.waldm.proverbica.infrastructure.SayingSource;
+import com.waldm.proverbica.settings.SettingsManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,17 +17,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import android.content.Context;
-import android.util.Log;
-
-import com.waldm.proverbica.Saying;
-import com.waldm.proverbica.SayingDisplayer;
-import com.waldm.proverbica.SayingListener;
-import com.waldm.proverbica.infrastructure.ImageSize;
-import com.waldm.proverbica.infrastructure.NetworkConnectivity;
-import com.waldm.proverbica.infrastructure.SayingSource;
-import com.waldm.proverbica.settings.SettingsManager;
 
 public class FileSayingRetriever implements SayingRetriever {
     private static final String TAG = FileSayingRetriever.class.getSimpleName();

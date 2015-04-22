@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.waldm.proverbica.Saying;
-import com.waldm.proverbica.SayingDisplayer;
 import com.waldm.proverbica.SayingListener;
 import com.waldm.proverbica.infrastructure.ImageSize;
 import com.waldm.proverbica.infrastructure.NetworkConnectivity;
