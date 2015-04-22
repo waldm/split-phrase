@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.e(WALDM,"oneNewIntent");
+        Log.e(WALDM, "oneNewIntent");
         super.onNewIntent(intent);
         tryLoadSayingFromWidget(intent);
     }
@@ -194,7 +194,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             }
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener(){
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextButton.clearAnimation();
@@ -323,7 +323,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         textView.setText(currentSaying.getText());
         imageView.setImageBitmap(bitmap);
 
-        updateFavouritesButton(1);
+        updateFavouritesButton();
 
         if (!slideshowController.isSlideshowRunning()) {
             previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
@@ -375,6 +375,12 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
     public void updateFavouritesButton(float alpha) {
         Log.e(WALDM, "updateFavouritesButton");
+        updateFavouritesButton();
+        favouritesButton.setAlpha(alpha);
+    }
+
+    public void updateFavouritesButton() {
+        Log.e(WALDM, "updateFavouritesButton");
         Saying currentSaying = sayingController.getCurrentSaying();
         if (currentSaying != null) {
             String currentSayingText = currentSaying.getText();
@@ -382,7 +388,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                     : android.R.drawable.btn_star;
             int text = favouritesController.hasFavourite(currentSayingText) ? R.string.remove_from_favourites
                     : R.string.add_to_favourites;
-            favouritesButton.setBackgroundTextAndAlpha(drawable, alpha, text);
+            favouritesButton.setBackgroundAndText(drawable, text);
         }
     }
 
