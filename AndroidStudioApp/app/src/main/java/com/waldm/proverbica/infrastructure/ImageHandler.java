@@ -27,7 +27,7 @@ public class ImageHandler {
         return Picasso.with(context).load(imageName);
     }
 
-    public void loadNextImage(String imageLocation) {
+    public void loadImage(String imageLocation) {
         Preconditions.checkNotNull(target, "Must call setTarget before loading image");
         getImage(imageLocation).into(target);
     }

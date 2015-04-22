@@ -1,5 +1,7 @@
 package com.waldm.proverbica;
 
+import android.graphics.Bitmap;
+
 public interface SayingDisplayer {
 
     void setSaying(Saying saying);
@@ -8,4 +10,5 @@ public interface SayingDisplayer {
 
     void updateShareIntent();
 
+    void displaySaying(Saying currentSaying, Bitmap bitmap, boolean canGoBack);
 }

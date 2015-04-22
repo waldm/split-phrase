@@ -4,11 +4,50 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:animateLayoutChanges="true" >
-    
-    <com.waldm.proverbica.views.CustomViewPager    
-        android:id="@+id/view_pager"
+
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/text_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:lines="2"
+        android:gravity="center"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:padding="4dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/text_background"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:layout_width="48dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="10dp"
+        android:layout_height="match_parent"
+        android:textColor="@android:color/white"
+        android:background="#00000000"
+        android:text="&lt;"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/previous_button"/>
+
+    <Button
+        android:layout_width="48dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="right|center_vertical"
+        android:layout_height="match_parent"
+        android:paddingRight="10dp"
+        android:textColor="@android:color/white"
+        android:background="#00000000"
+        android:text="&gt;"
+        android:layout_alignParentRight="true"
+        android:id="@+id/next_button"/>
 
     <com.waldm.proverbica.views.ProverbicaImageButton 
         android:id="@+id/button_slideshow"
