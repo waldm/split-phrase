@@ -1,7 +1,5 @@
 package com.waldm.proverbica.app;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,6 +11,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +23,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.waldm.proverbica.BaseActivity;
 import com.waldm.proverbica.R;
 import com.waldm.proverbica.Saying;
 import com.waldm.proverbica.SayingDisplayer;
@@ -44,7 +47,7 @@ import com.waldm.proverbica.views.ProverbicaButton;
 import com.waldm.proverbica.widget.SayingIO;
 import com.waldm.proverbica.widget.UpdateWidgetService;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener, SayingDisplayer,
+public class MainActivity extends BaseActivity implements OnSharedPreferenceChangeListener, SayingDisplayer,
         Callback, SlideshowDisplayer {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -75,7 +78,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(WALDM, "onCreate: " +  savedInstanceState);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         setTitle(getString(R.string.app_name));
 
         initialiseControllers();
@@ -95,6 +97,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             slideshowController.setIsSlideshowRunning(savedInstanceState.getBoolean(SLIDESHOW_RUNNING));
             sayingController.setSaying(new Saying(savedInstanceState.getString(SAYING_TEXT), savedInstanceState.getString(SAYING_IMAGE)));
         }
+    }
+
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
     }
 
     private void initialiseViews() {
@@ -264,7 +271,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         if (favouritesController.hasFavourites()) {
             updateFavouritesMenuItemDrawable();
         }
-        shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.menu_item_share));
 
         updateShareIntent();
         return true;
@@ -360,7 +368,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void startSlideshow() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.hide();
         }
@@ -373,7 +381,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     @Override
     public void stopSlideshow() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.show();
         }
