@@ -224,8 +224,11 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.e(WALDM, "onSaveInstanceState");
         outState.putBoolean(SLIDESHOW_RUNNING, slideshowController.isSlideshowRunning());
-        outState.putString(SAYING_TEXT, sayingController.getCurrentSaying().getText());
-        outState.putString(SAYING_IMAGE, sayingController.getCurrentSaying().getImageLocation());
+        Saying currentSaying = sayingController.getCurrentSaying();
+        if (currentSaying != null) {
+            outState.putString(SAYING_TEXT, currentSaying.getText());
+            outState.putString(SAYING_IMAGE, currentSaying.getImageLocation());
+        }
         super.onSaveInstanceState(outState);
     }
 
