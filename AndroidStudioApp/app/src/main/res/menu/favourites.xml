@@ -5,7 +5,7 @@
         android:id="@+id/menu_item_share"
         app:showAsAction="ifRoom"
         android:title="@string/share"
-        android:actionProviderClass="android.widget.ShareActionProvider" />
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
     
     <item
         android:id="@+id/menu_item_delete"

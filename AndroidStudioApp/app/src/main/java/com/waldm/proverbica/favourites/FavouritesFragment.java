@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 import android.widget.SimpleAdapter;
 
 import com.google.common.collect.ImmutableMap;
@@ -73,7 +74,7 @@ public class FavouritesFragment extends ListFragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.favourites, menu);
-                shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+                shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.menu_item_share));
                 return true;
             }
 
