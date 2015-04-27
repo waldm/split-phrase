@@ -1,3 +1,14 @@
 AndroidApp/bin/
 AndroidApp\gen/
 AndroidApp/gen/com/waldm/proverbica/
+AndroidStudioApp/app/build/
+AndroidStudioApp/.idea/libraries/
+AndroidStudioApp/.idea/workspace.xml
+AndroidStudioApp/build/
+AndroidStudioApp/local.properties
+AndroidStudioApp/.gradle/
+AndroidWidgetApp/app/build/
+AndroidWidgetApp/.idea/libraries/
+AndroidWidgetApp/.idea/workspace.xml
+AndroidWidgetApp/.gradle/
+AndroidWidgetApp/build/
