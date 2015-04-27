@@ -94,12 +94,6 @@ public class FavouritesFragment extends ListFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        setListAdapter(null);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         getListView().setItemChecked(position, true);
