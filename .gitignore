@@ -11,3 +11,7 @@ AndroidStudioApp/app/build/
 /build
 AndroidStudioApp/.idea/workspace.xml
 AndroidStudioApp/.idea/libraries/
+AndroidWidgetApp/app/build/
+AndroidWidgetApp/.idea/libraries/
+AndroidWidgetApp/build/
+AndroidWidgetApp/.idea/workspace.xml
