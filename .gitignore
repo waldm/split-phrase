@@ -10,3 +10,4 @@ AndroidStudioApp/app/build/
 .DS_Store
 /build
 AndroidStudioApp/.idea/workspace.xml
+AndroidStudioApp/.idea/libraries/
