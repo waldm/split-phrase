@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 import android.widget.SimpleAdapter;
 
 import com.google.common.collect.ImmutableMap;
@@ -29,7 +28,6 @@ public class FavouritesFragment extends ListFragment {
 
     private static final String PROVERB_KEY = "proverb_key";
     private List<Map<String, String>> list;
-    private ShareActionProvider shareActionProvider;
     private SimpleAdapter adapter;
 
     @Override
@@ -54,7 +52,6 @@ public class FavouritesFragment extends ListFragment {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                updateShareIntent();
             }
 
             @Override
@@ -63,6 +60,10 @@ public class FavouritesFragment extends ListFragment {
                     case R.id.menu_item_delete:
                         deleteSelectedItems();
                         mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    case R.id.menu_item_share:
+                        displayShareIntent();
+                        mode.finish();
                         return true;
                     default:
                         return false;
@@ -73,7 +74,6 @@ public class FavouritesFragment extends ListFragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.favourites, menu);
-                shareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
                 return true;
             }
 
@@ -94,16 +94,9 @@ public class FavouritesFragment extends ListFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        setListAdapter(null);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         getListView().setItemChecked(position, true);
-        updateShareIntent();
     }
 
     private void deleteSelectedItems() {
@@ -127,11 +120,7 @@ public class FavouritesFragment extends ListFragment {
         FavouritesIO.writeFavourites(toKeep, getActivity());
     }
 
-    private void updateShareIntent() {
-        if (shareActionProvider == null) {
-            return;
-        }
-
+    private void displayShareIntent() {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         String favourites = "";
@@ -142,7 +131,7 @@ public class FavouritesFragment extends ListFragment {
         }
         shareIntent.putExtra(Intent.EXTRA_TEXT, favourites);
         shareIntent.setType("text/plain");
-        shareActionProvider.setShareIntent(shareIntent);
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
     }
 
     @Override

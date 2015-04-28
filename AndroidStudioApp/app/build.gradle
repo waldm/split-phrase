@@ -19,8 +19,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:22.1.1'
     compile 'com.google.guava:guava:18.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:appcompat-v7:21.0+'
+    compile 'com.android.support:appcompat-v7:22.1.1'
 }

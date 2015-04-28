@@ -11,9 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +58,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     private static final String SAYING_IMAGE = "SayingImage";
     private static final String WALDM = "WALDM";
     private ImageView imageView;
-    private ShareActionProvider shareActionProvider;
     private ProverbicaButton slideShowButton;
     private ProverbicaButton favouritesButton;
     private Runnable hideFavouritesButton;
@@ -295,25 +292,18 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             updateFavouritesMenuItemDrawable();
         }
 
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.menu_item_share));
-
-        updateShareIntent();
         return true;
     }
 
-    public void updateShareIntent() {
+    public void displayShareIntent() {
         Log.e(WALDM, "updateShareIntent");
-        if (shareActionProvider == null) {
-            return;
-        }
-
         Saying currentSaying = sayingController.getCurrentSaying();
         if (currentSaying != null) {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_TEXT, currentSaying.getText() + " - http://proverbica.com");
             shareIntent.setType("text/plain");
-            shareActionProvider.setShareIntent(shareIntent);
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
         }
     }
 
@@ -328,7 +318,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         if (!slideshowController.isSlideshowRunning()) {
             previousButton.setVisibility(canGoBack ? View.VISIBLE : View.INVISIBLE);
         }
-        updateShareIntent();
     }
 
     @Override
@@ -343,6 +332,9 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                 return true;
             case R.id.menu_item_favourites:
                 startActivity(new Intent(this, FavouritesActivity.class));
+                return true;
+            case R.id.menu_item_share:
+                displayShareIntent();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
