@@ -403,6 +403,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         slideShowButton.setBackgroundTextAndAlpha(android.R.drawable.ic_media_pause, 1, R.string.pause_slideshow);
         previousButton.setVisibility(View.INVISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
+        nextButton.clearAnimation();
     }
 
     @Override
